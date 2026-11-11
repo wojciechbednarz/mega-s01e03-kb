@@ -2,14 +2,14 @@
 // same placement the kb page uses (#lib/kb/symptoms, #lib/kb/causes), so a ticket can't drift
 // from the page. Prints one JSON object per problem: { problem, issue, title, labels, body }.
 //
-//   bun scripts/issue-bodies.ts            # dry run: print
+//   bun .agents/skills/support-kb/scripts/issue-bodies.ts   # dry run: print
 //
 // The page is the home of the explanation; a ticket says what's broken, how many, which fix.
 import { readdirSync, readFileSync } from 'node:fs';
-import { causeOf, uniqueById, type Report, type Tenant } from '../src/lib/kb/causes.ts';
-import { place, type Placed } from '../src/lib/kb/symptoms.ts';
+import { causeOf, uniqueById, type Report, type Tenant } from '../../../../src/lib/kb/causes.ts';
+import { place, type Placed } from '../../../../src/lib/kb/symptoms.ts';
 
-const root = new URL('..', import.meta.url).pathname;
+const root = new URL('../../../../', import.meta.url).pathname;
 const data = (p: string) => JSON.parse(readFileSync(root + 'src/lib/data/' + p, 'utf8'));
 
 const reports = data('reports-4471.json') as Report[];
@@ -29,17 +29,17 @@ const PAGE_OUT = `${REPO}/blob/main/rendered/kb/incidents/4471-split.html`;
 type Problem = 'parser' | 'hint' | 'time-zone';
 const ABOUT: Record<Problem, { title: string; problem: string; fix: string }> = {
   parser: {
-    title: 'parser reads day-first dates month first',
+    title: 'dates parse mm/dd in day-first locales',
     problem: 'The shared parser reads every date month first, so a day-first tenant’s dates come out with day and month swapped.',
     fix: 'The parser: read dates in the tenant’s order.',
   },
   hint: {
-    title: 'booking-v3 date hint says MM/DD, form reads DD/MM',
+    title: 'booking-v3 date hint says mm/dd, form reads dd/mm',
     problem: 'booking-v3’s form prints MM/DD/YYYY under its date field; people at day-first tenants type what it says, and the form reads the date day first, so it comes out swapped.',
     fix: 'The booking-v3 form’s date hint (or how the form reads it). Fixing the parser does not fix these.',
   },
   'time-zone': {
-    title: 'booking date moves by one day (time zone / DST)',
+    title: 'booking dates move by one day across time zones',
     problem: 'The date moves by one day; it is not swapped. A time-zone or daylight-saving error moves a date by hours, at most a day.',
     fix: 'Time-zone and daylight-saving handling. Neither the parser fix nor the hint fix stops these.',
   },
