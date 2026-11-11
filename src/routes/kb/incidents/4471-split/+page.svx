@@ -1,0 +1,68 @@
+---
+layout: runbook
+title: '#4471 split · three problems, not one'
+owner: support desk
+status: split
+reviewed: 2026-11-11
+source: 'src/lib/data/reports-4471.json (export 2026-10-04), src/lib/data/desk-notes.json'
+signature: ''
+---
+
+<script>
+  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+**#4471 holds three problems, not one.** Every one of its 412 reports is about a wrong date, so they
+were merged as one issue. But they need three different fixes. #4471 stays the **parser** ticket; the
+**hint** and the **time-zone** problems each get a ticket of their own.
+
+<Callout>
+
+Read each report for **which fix would stop it**, not for "it's about dates". A swapped day and month
+(7 April → 4 July) is a months-long jump; a time-zone error moves a date by hours, at most one day.
+One bug can't do both.
+
+</Callout>
+
+## What #4471 really holds
+
+<SplitTable ticket={4471} />
+
+- **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
+  swapped. This is what [#4471](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
+- **hint** — the same swap, but the parser is not the cause: booking-v3's form prints `MM/DD/YYYY` under
+  its date field, people type what it says, and the form reads it the tenant's way. Only reports that
+  came **through the form** from a booking-v3 day-first tenant. Fixing the parser does not fix these.
+- **time-zone** — the date moves by one day, it isn't swapped ("Tuesday 12 May… Monday 11 May",
+  "Lisbon got Tuesday, Toronto got Monday"). A different fix again: time zones and daylight saving.
+
+## How every report was placed
+
+Strongest evidence first, stop at the first that answers (`#lib/kb/symptoms`):
+
+1. **The text.** The dates the reporter wrote: swapped, or one day apart. Proof.
+2. **The desk's note.** Reports the desk already read as a one-day move (`desk-notes.json`).
+3. **Inferred, last.** A report whose body names no date takes the symptom of its siblings — the same
+   tenant through the same channel — when at least 5 are placed and 90% agree. It describes the
+   customer, not the report, so it runs last and is labelled. Hint can't be inferred for a report that
+   didn't come through the form.
+
+## Why one ticket held three problems
+
+- [Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose **subject lines** match, without
+  reading the body; the [triage page](/kb/triage/dedupe) says "when unsure, merge". Different bugs share
+  subjects like "Wrong day on the invite".
+- Intake's tag is a guess from the browser: some hint reports were tagged `parser`.
+- Grouping by **tenant** isn't enough either: the desk's one-day moves came from parser tenants.
+
+Decision 0001 stays as accepted (decisions are never edited); replacing it is a new record, not part of this page.
+
+## Sources
+
+- `reports-4471.json` — 427 rows, 412 unique by id, all merged into #4471. Export of 2026-10-04.
+- `desk-notes.json` — the desk's five one-day moves.
+- `tenants/*.json` — locale and booking form per tenant.
+
+<RenderStamp {signature} />

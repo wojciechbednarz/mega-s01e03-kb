@@ -22,6 +22,9 @@ first. The fix is queued.
 Known. One issue, one fix queued.
 </Callout>
 
+**Update 2026-11-11:** read by what each report says, #4471 holds three problems, not one — see
+[#4471 split](/kb/incidents/4471-split). This ticket stays the parser ticket.
+
 ## What was merged
 
 <CauseTable ticket={4471} />
