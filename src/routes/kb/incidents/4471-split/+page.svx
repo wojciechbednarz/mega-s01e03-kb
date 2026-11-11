@@ -63,7 +63,7 @@ Decision 0001 stays as accepted (decisions are never edited); replacing it is a 
 ## Sources
 
 - `reports-4471.json` — the ticket system's export of 2026-10-04; its pages overlap, so reports are counted once by id (the count is in the table above).
-- `desk-notes.json` — the desk's five one-day moves.
+- `desk-notes.json` — the reports the desk itself read as a one-day move.
 - `tenants/*.json` — locale and booking form per tenant.
 
 <RenderStamp {signature} />
