@@ -61,11 +61,15 @@ const want = tickets();
 const total = want.reduce((n, t) => n + t.count, 0);
 const ids = new Set(want.flatMap((t) => t.ids));
 if (ids.size !== total) errors.push(`a report is in more than one ticket (${total} placements, ${ids.size} reports)`);
-const issues = JSON.parse(sh('gh', ['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '100', '--json', 'number,title,body,state,labels']));
+const issues = JSON.parse(sh('gh', ['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '100', '--json', 'number,title,body,state,stateReason,labels']));
+const split = JSON.parse(readFileSync(join(root, 'src/lib/data/split-4471.json'), 'utf8'));
 for (const t of want) {
   const i = issues.find((x: any) => String(x.number) === t.issue);
   if (!i) { errors.push(`cause ${t.cause}: no GitHub issue #${t.issue}`); continue; }
-  if (i.state !== 'OPEN') errors.push(`#${t.issue} (${t.cause}) is ${i.state}, the page links it as a live ticket`);
+  const want = (split.tickets as any)[t.cause] ?? {};
+  const wantState = want.state ?? 'OPEN';
+  if (i.state !== wantState) errors.push(`#${t.issue} (${t.cause}) is ${i.state}, split-4471.json expects ${wantState}`);
+  if (want.stateReason && i.stateReason !== want.stateReason) errors.push(`#${t.issue} closed as ${i.stateReason}, expected ${want.stateReason}`);
   if (i.title !== t.title) errors.push(`#${t.issue} title differs from the generated one`);
   if (i.body.trim() !== t.body.trim()) errors.push(`#${t.issue} body differs from the generated one (run issue-bodies.ts, then gh issue edit)`);
   const have = i.labels.map((l: any) => l.name).sort().join(',');

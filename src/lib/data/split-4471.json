@@ -1,7 +1,15 @@
 {
   "ticket": 4471,
   "tickets": {
-    "parser": { "label": "issue #3", "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3" },
-    "hint": { "label": "issue #1", "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/1" }
+    "parser": {
+      "label": "issue #3",
+      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3"
+    },
+    "hint": {
+      "label": "issue #1 (closed, not planned)",
+      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/1",
+      "state": "CLOSED",
+      "stateReason": "NOT_PLANNED"
+    }
   }
 }
