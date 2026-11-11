@@ -6,3 +6,4 @@
 - Open: the knowledge skill's `check.ts` reads only `.md`; these pages are `.svx`.
 - 2026-11-11 — `kb/tasks/` board (one page per task, status in frontmatter, not folders, so links survive a status change); tasks point to their ticket and never copy counts or status (lesson: broader context + pointer notes).
 - 2026-11-11 — tickets follow the desk's cause partition (parser 379, hint 33; desk-noted one-day reports footnoted), after 14 refusals on a symptom partition; `sanitize.ts` added as the pre-push and pre-claim gate after it found 6 unsigned added pages.
+- 2026-11-11 — ticket bodies open with a structured header (`desk-ticket`, `cause`, `reports`), so the tie to the desk's ticket is parseable, not prose (claim 16).

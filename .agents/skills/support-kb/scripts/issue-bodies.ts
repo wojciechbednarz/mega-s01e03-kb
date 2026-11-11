@@ -51,6 +51,10 @@ export function tickets() {
     const days = rs.map((r) => r.receivedAt).sort();
     const tenantList = [...new Set(rs.map((r) => r.tenant))].sort();
     const body = [
+      `desk-ticket: ${split.ticket}`,
+      `cause: ${cause}`,
+      `reports: ${rs.length}`,
+      '',
       `**Reports: ${rs.length}** — split out of support ticket #${split.ticket} (support desk ticket, not an issue in this repo).`,
       '',
       `**Problem:** ${ABOUT[cause].problem}`,
