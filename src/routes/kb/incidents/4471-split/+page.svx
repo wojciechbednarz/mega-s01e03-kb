@@ -5,7 +5,7 @@ owner: support desk
 status: split
 reviewed: 2026-11-11
 source: 'src/lib/data/reports-4471.json (export 2026-10-04), src/lib/data/desk-notes.json'
-signature: ''
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
 
 <script>
