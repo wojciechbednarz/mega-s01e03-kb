@@ -2,12 +2,12 @@
 layout: runbook
 title: '#4471 · dates parse mm/dd in eu locales'
 owner: support desk
-status: known
-reviewed: 2026-09-30
+status: split
+reviewed: 2026-11-11
 ---
 
 <script>
-  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import SplitTable from '#lib/kb/SplitTable.svelte';
   import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
   import Callout from '#lib/kb/Callout.svelte';
 </script>
@@ -19,7 +19,7 @@ Since April, people have told us their bookings land on the wrong day: a month f
 first. The fix is queued.
 
 <Callout>
-Known. One issue, one fix queued.
+Split: three problems, one ticket each.
 </Callout>
 
 **Update 2026-11-11:** read by what each report says, #4471 holds three problems, not one — see
@@ -27,7 +27,7 @@ Known. One issue, one fix queued.
 
 ## What was merged
 
-<CauseTable ticket={4471} />
+<SplitTable ticket={4471} />
 
 ## Since April
 

@@ -26,12 +26,15 @@
   const rows = ORDER.map((problem) => {
     const rs = merged.filter((r) => problemOf(r, placed.get(r.id)!) === problem);
     const by = (e: Placed['evidence']) => rs.filter((r) => placed.get(r.id)!.evidence === e).length;
-    return { problem, count: rs.length, text: by('text'), desk: by('desk'), inferred: by('inferred'), ids: rs.map((r) => r.id) };
+    // What users say: the subject lines they wrote most, with counts (the kb holds the distilled
+    // picture; the ticket holds the reports themselves).
+    const subjects = new Map<string, number>();
+    for (const r of rs) subjects.set(r.subject, (subjects.get(r.subject) ?? 0) + 1);
+    const say = [...subjects.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 2);
+    return { problem, count: rs.length, text: by('text'), desk: by('desk'), inferred: by('inferred'), say };
   }).filter((row) => row.count > 0);
 
-  const inferred = merged
-    .filter((r) => placed.get(r.id)!.evidence === 'inferred')
-    .map((r) => ({ id: r.id, problem: problemOf(r, placed.get(r.id)!), basis: placed.get(r.id)!.basis }));
+  const inferredCount = merged.filter((r) => placed.get(r.id)!.evidence === 'inferred').length;
 
   const ticketOf = (p: Problem) => (split.tickets as Record<string, { label: string; url: string }>)[p];
 </script>
@@ -43,7 +46,7 @@
 
 <table>
   <thead>
-    <tr><th>problem</th><th>ticket</th><th>reports</th><th>by text</th><th>by desk note</th><th>inferred</th></tr>
+    <tr><th>problem</th><th>ticket</th><th>reports</th><th>by text</th><th>by desk note</th><th>inferred</th><th>users say most</th></tr>
   </thead>
   <tbody>
     {#each rows as row (row.problem)}
@@ -60,18 +63,14 @@
         <td>{row.text}</td>
         <td>{row.desk}</td>
         <td>{row.inferred}</td>
+        <td class="say">{row.say.map(([subject, n]) => `“${subject}” ×${n}`).join(' · ')}</td>
       </tr>
     {/each}
   </tbody>
 </table>
 
-{#if inferred.length}
-  <p class="note">Inferred, not read from the report: the body names no date, so the report takes the symptom its siblings share.</p>
-  <ul class="note">
-    {#each inferred as i (i.id)}
-      <li><code>{i.id}</code> → <code>{i.problem}</code>: {i.basis}</li>
-    {/each}
-  </ul>
+{#if inferredCount}
+  <p class="note">{inferredCount} {inferredCount === 1 ? 'report names' : 'reports name'} no date and {inferredCount === 1 ? 'was' : 'were'} placed by inference from same-tenant, same-channel reports; which ones, and why, is in each ticket.</p>
 {/if}
 
 <style>
@@ -79,4 +78,5 @@
   table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
   th, td { text-align: left; padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--line, #ddd); }
   .note { color: var(--muted, #666); font-size: 0.88rem; }
+  .say { color: var(--muted, #666); font-size: 0.85rem; }
 </style>

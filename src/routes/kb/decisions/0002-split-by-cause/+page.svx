@@ -1,0 +1,44 @@
+---
+layout: runbook
+title: '0002 · Before a ticket is marked known, split it by cause'
+owner: support desk
+status: proposed
+reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
+---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+**Date:** 11 November 2026 · **Proposed by:** the author of [#4471 split](/kb/incidents/4471-split) · **To decide:** Rune (product), support desk
+
+**Proposed:** keep merging by subject at intake ([decision 0001](/kb/decisions/0001-dedupe-by-subject)), but before a
+merged ticket is marked **known**, read its reports for **which fix would stop each one** and split it by cause.
+0001 stays accepted until this one is decided.
+
+## Context
+
+0001 merges reports whose subject lines match, without reading the body. It accepted one cost: reports
+with *different* subjects about the same bug end up in separate tickets, merged later.
+
+\#4471 showed the opposite cost, which 0001 does not name: reports with the **same** subject from
+**different** bugs end up in **one** ticket. "Invite came on the wrong day" was written about the parser
+bug and about the booking-v3 hint bug alike. The ticket was marked known with one fix queued, and two of
+its three problems had nobody working on them ([#4471 split](/kb/incidents/4471-split)).
+
+## Decision (proposed)
+
+1. Intake keeps merging by subject — 0001's reason, speed during an incident, still holds.
+2. Before a merged ticket's status becomes **known**, its reports are placed by what their bodies say
+   (`#lib/kb/symptoms`) and grouped by the fix that would stop them.
+3. One problem, one ticket; the incident page shows every problem with its ticket and its count.
+
+## Consequences
+
+- A big ticket costs one read of its bodies before it is marked known — minutes with `place()`, not a person's morning.
+- Two bugs can no longer hide in one known ticket.
+- Reports that name no date are placed last, by inference, and labelled as such.
+- If accepted, 0001 becomes **amended** (intake rule kept, "known" rule added); 0001's text stays as written.
+
+<RenderStamp {signature} />

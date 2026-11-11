@@ -58,7 +58,7 @@ Strongest evidence first, stop at the first that answers (`#lib/kb/symptoms`):
 - Intake's tag is a guess from the browser: some hint reports were tagged `parser`.
 - Grouping by **tenant** isn't enough either: the desk's one-day moves came from parser tenants.
 
-Decision 0001 stays as accepted (decisions are never edited); replacing it is a new record, not part of this page.
+Decision 0001 stays as accepted (decisions are never edited). What it should change is proposed in [decision 0002](/kb/decisions/0002-split-by-cause).
 
 ## Sources
 
