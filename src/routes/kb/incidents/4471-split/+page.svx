@@ -12,9 +12,10 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   import SplitTable from '#lib/kb/SplitTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import { MIN_SIBLINGS, MIN_SHARE } from '#lib/kb/symptoms';
 </script>
 
-**#4471 holds three problems, not one.** Every one of its 412 reports is about a wrong date, so they
+**#4471 holds three problems, not one.** Every one of its reports is about a wrong date, so they
 were merged as one issue. But they need three different fixes, so each problem has a ticket of its own:
 **parser**, **hint** and **time-zone**.
 
@@ -45,7 +46,7 @@ Strongest evidence first, stop at the first that answers (`#lib/kb/symptoms`):
 1. **The text.** The dates the reporter wrote: swapped, or one day apart. Proof.
 2. **The desk's note.** Reports the desk already read as a one-day move (`desk-notes.json`).
 3. **Inferred, last.** A report whose body names no date takes the symptom of its siblings — the same
-   tenant through the same channel — when at least 5 are placed and 90% agree. It describes the
+   tenant through the same channel — when at least {MIN_SIBLINGS} are placed and {Math.round(MIN_SHARE * 100)}% agree. It describes the
    customer, not the report, so it runs last and is labelled. Hint can't be inferred for a report that
    didn't come through the form.
 
@@ -61,7 +62,7 @@ Decision 0001 stays as accepted (decisions are never edited); replacing it is a 
 
 ## Sources
 
-- `reports-4471.json` — 427 rows, 412 unique by id, all merged into #4471. Export of 2026-10-04.
+- `reports-4471.json` — the ticket system's export of 2026-10-04; its pages overlap, so reports are counted once by id (the count is in the table above).
 - `desk-notes.json` — the desk's five one-day moves.
 - `tenants/*.json` — locale and booking form per tenant.
 
