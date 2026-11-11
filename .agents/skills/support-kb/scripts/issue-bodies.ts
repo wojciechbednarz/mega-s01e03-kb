@@ -88,11 +88,7 @@ for (const problem of ORDER) {
     '',
     `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}) · [as the desk sees it](${PAGE_OUT}).`,
     '',
-    `<details><summary>Report ids (${rs.length})</summary>`,
-    '',
-    rs.map((r) => r.id).join(', '),
-    '',
-    '</details>',
+    `Reports covered (${rs.length}), each \`mergedInto: ${split.ticket}\` in the export: ${rs.map((r) => r.id).join(', ')}`,
   ].join('\n');
 
   const labels = ['bug', `split-from-${split.ticket}`, `cause:${problem}`, ...(inferred.length ? ['has-inferred'] : [])];

@@ -8,5 +8,5 @@ Show it to a person before `gh issue create` / `gh issue edit`: tickets are publ
 
 - **Title:** `<what goes wrong, lowercase, in the desk's words> · <N> reports from #<ticket>` — the kb's titles are lowercase `id · point`, and the desk matches by subject line.
 - **Labels, one axis each:** `bug` · `split-from-<ticket>` · `cause:<problem>` · `has-inferred` — one meaning per label, one question per filter.
-- **Body:** count first · problem · fix · where the other problems went · placed by text / desk / inferred (inferred named with basis) · link to the split page · ids folded. The page is the home of the explanation.
+- **Body:** count first · problem · fix · where the other problems went · placed by text / desk / inferred (inferred named with basis) · link to the split page · the covered report ids on one plain line (`mergedInto` in the export). The page is the home of the explanation.
 - The split page links each problem to its ticket through `src/lib/data/split-<ticket>.json`.
