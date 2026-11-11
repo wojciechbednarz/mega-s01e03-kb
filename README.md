@@ -15,6 +15,7 @@ src/routes/kb/      the pages (.svx: Markdown with components)
   triage/           how the desk handles incoming reports
   incidents/        one page per big ticket
   decisions/        numbered decision records
+  tasks/            one page per task: implemented, active, planned, archived
 src/lib/kb/         components and the logic they run
 src/lib/layouts/    the frame every page shares
 src/lib/data/       exports from the ticket system

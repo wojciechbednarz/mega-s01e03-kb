@@ -1,0 +1,15 @@
+---
+layout: runbook
+title: 'Fix one-day date moves across time zones'
+owner: support desk
+status: planned
+reviewed: 2026-11-11
+---
+
+**Planned, found 2026-11-11** in the #4471 split. Dates move by one day, not swapped — time zones or
+daylight saving. The desk had already noted these reports itself (`desk-notes.json`).
+
+**Ticket:** [issue #2](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/2) holds the reports, the count and its
+status — read it there.
+
+Neither the [parser fix](/kb/tasks/fix-parser-day-first) nor the [hint fix](/kb/tasks/fix-booking-v3-hint) stops these.

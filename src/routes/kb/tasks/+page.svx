@@ -1,0 +1,17 @@
+---
+layout: runbook
+title: 'Tasks'
+owner: support desk
+status: living
+reviewed: 2026-11-11
+---
+
+<script>
+  import TaskBoard from '#lib/kb/TaskBoard.svelte';
+</script>
+
+What the desk has done, is doing, plans and dropped — so a page about one incident is read with what came
+before and what comes next. One page per task in `kb/tasks/`; its `status` places it on the board.
+A task points to its ticket for counts and status; it never copies them.
+
+<TaskBoard />

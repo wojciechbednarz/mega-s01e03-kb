@@ -13,7 +13,7 @@ reviewed: 2026-09-28
 What the support desk knows, kept next to the code that knows it. One desk, every product:
 `sched-prod` (calendar invites for about 300k people) and the rest. When something breaks, the reports land here first.
 
-Start with [triage](/kb/triage/dedupe) if you are new on the desk.
+Start with [triage](/kb/triage/dedupe) if you are new on the desk. What the desk is working on: [tasks](/kb/tasks).
 
 ## Pages
 

@@ -1,0 +1,14 @@
+---
+layout: runbook
+title: 'Merge duplicate reports by subject line'
+owner: support desk
+status: implemented
+reviewed: 2026-11-11
+---
+
+**Implemented June 2024.** Intake merges a report into the open ticket whose subject line matches, after
+lowercasing and stripping punctuation — fast, nobody reads the body. Why: [decision 0001](/kb/decisions/0001-dedupe-by-subject).
+How the desk runs it: [triage](/kb/triage/dedupe).
+
+What it cost: #4471 merged three different problems under shared subjects ([#4471 split](/kb/incidents/4471-split)).
+The proposed change is its own task: [split by cause before known](/kb/tasks/split-by-cause).
