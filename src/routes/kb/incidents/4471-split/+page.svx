@@ -15,8 +15,8 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **#4471 holds three problems, not one.** Every one of its 412 reports is about a wrong date, so they
-were merged as one issue. But they need three different fixes. #4471 stays the **parser** ticket; the
-**hint** and the **time-zone** problems each get a ticket of their own.
+were merged as one issue. But they need three different fixes, so each problem has a ticket of its own:
+**parser**, **hint** and **time-zone**.
 
 <Callout>
 
@@ -31,7 +31,7 @@ One bug can't do both.
 <SplitTable ticket={4471} />
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
-  swapped. This is what [#4471](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
+  swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
 - **hint** — the same swap, but the parser is not the cause: booking-v3's form prints `MM/DD/YYYY` under
   its date field, people type what it says, and the form reads it the tenant's way. Only reports that
   came **through the form** from a booking-v3 day-first tenant. Fixing the parser does not fix these.
