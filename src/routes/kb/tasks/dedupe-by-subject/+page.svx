@@ -4,11 +4,18 @@ title: 'Merge duplicate reports by subject line'
 owner: support desk
 status: implemented
 reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
 
 **Implemented June 2024.** Intake merges a report into the open ticket whose subject line matches, after
 lowercasing and stripping punctuation — fast, nobody reads the body. Why: [decision 0001](/kb/decisions/0001-dedupe-by-subject).
 How the desk runs it: [triage](/kb/triage/dedupe).
 
-What it cost: #4471 merged three different problems under shared subjects ([#4471 split](/kb/incidents/4471-split)).
+What it cost: #4471 merged two different causes under shared subjects ([#4471 split](/kb/incidents/4471-split)).
 The proposed change is its own task: [split by cause before known](/kb/tasks/split-by-cause).
+
+<RenderStamp {signature} />

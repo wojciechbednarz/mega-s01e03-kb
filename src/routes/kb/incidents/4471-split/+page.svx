@@ -1,10 +1,10 @@
 ---
 layout: runbook
-title: '#4471 split · three problems, not one'
+title: '#4471 split · two causes, not one'
 owner: support desk
 status: split
 reviewed: 2026-11-11
-source: 'src/lib/data/reports-4471.json (export 2026-10-04), src/lib/data/desk-notes.json'
+source: 'src/lib/data/reports-4471.json (export 2026-10-04), src/lib/data/desk-notes.json, src/lib/kb/causes.ts'
 signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
 
@@ -12,18 +12,17 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   import SplitTable from '#lib/kb/SplitTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
-  import { MIN_SIBLINGS, MIN_SHARE } from '#lib/kb/symptoms';
 </script>
 
-**#4471 holds three problems, not one.** Every one of its reports is about a wrong date, so they
-were merged as one issue. But they need three different fixes, so each problem has a ticket of its own:
-**parser**, **hint** and **time-zone**.
+**#4471 holds two causes, not one.** Every report in it is about a wrong date, so they were merged as one
+issue — but by the desk's own rule (`causes.ts`) they come from two causes that need two fixes, so each
+cause has a ticket of its own: **parser** and **hint**.
 
 <Callout>
 
-Read each report for **which fix would stop it**, not for "it's about dates". A swapped day and month
-(7 April → 4 July) is a months-long jump; a time-zone error moves a date by hours, at most one day.
-One bug can't do both.
+A cause is decided by **where a report comes from** — the tenant's locale, its booking form and the
+channel the report came through — not by its subject, and not by intake's tag (`causes.ts`). Same
+subject, different cause is normal here.
 
 </Callout>
 
@@ -33,37 +32,26 @@ One bug can't do both.
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
   swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
-- **hint** — the same swap, but the parser is not the cause: booking-v3's form prints `MM/DD/YYYY` under
-  its date field, people type what it says, and the form reads it the tenant's way. Only reports that
-  came **through the form** from a booking-v3 day-first tenant. Fixing the parser does not fix these.
-- **time-zone** — the date moves by one day, it isn't swapped ("Tuesday 12 May… Monday 11 May",
-  "Lisbon got Tuesday, Toronto got Monday"). A different fix again: time zones and daylight saving.
+- **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
+  what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
+  booking-v3 day-first tenant. Fixing the parser does not fix these.
+- **The desk's one-day notes** — the desk read a few parser reports as a date moving by one day
+  (`desk-notes.json`). As the desk does, they are counted where they're filed and footnoted above; whether
+  they are a cause of their own is [a task](/kb/tasks/fix-time-zone-moves), not a ticket yet.
 
-## How every report was placed
-
-Strongest evidence first, stop at the first that answers (`#lib/kb/symptoms`):
-
-1. **The text.** The dates the reporter wrote: swapped, or one day apart. Proof.
-2. **The desk's note.** Reports the desk already read as a one-day move (`desk-notes.json`).
-3. **Inferred, last.** A report whose body names no date takes the symptom of its siblings — the same
-   tenant through the same channel — when at least {MIN_SIBLINGS} are placed and {Math.round(MIN_SHARE * 100)}% agree. It describes the
-   customer, not the report, so it runs last and is labelled. Hint can't be inferred for a report that
-   didn't come through the form.
-
-## Why one ticket held three problems
+## Why one ticket held two causes
 
 - [Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose **subject lines** match, without
-  reading the body; the [triage page](/kb/triage/dedupe) says "when unsure, merge". Different bugs share
-  subjects like "Wrong day on the invite".
-- Intake's tag is a guess from the browser: some hint reports were tagged `parser`.
-- Grouping by **tenant** isn't enough either: the desk's one-day moves came from parser tenants.
+  reading anything else; the [triage page](/kb/triage/dedupe) says "when unsure, merge". Both causes share
+  subjects like "Invite came on the wrong day" (see the table).
+- Intake's tag is a guess from the browser: some hint reports were tagged `parser`, and the other way round.
 
 Decision 0001 stays as accepted (decisions are never edited). What it should change is proposed in [decision 0002](/kb/decisions/0002-split-by-cause).
 
 ## Sources
 
-- `reports-4471.json` — the ticket system's export of 2026-10-04; its pages overlap, so reports are counted once by id (the count is in the table above).
+- `reports-4471.json` — the ticket system's export of 2026-10-04; its pages overlap, so reports are counted once by id.
+- `tenants/*.json` — locale and booking form per tenant, which `causes.ts` reads.
 - `desk-notes.json` — the reports the desk itself read as a one-day move.
-- `tenants/*.json` — locale and booking form per tenant.
 
 <RenderStamp {signature} />

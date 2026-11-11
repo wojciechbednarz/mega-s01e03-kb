@@ -4,9 +4,11 @@ title: 'Tasks'
 owner: support desk
 status: living
 reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
 
 <script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
   import TaskBoard from '#lib/kb/TaskBoard.svelte';
 </script>
 
@@ -15,3 +17,5 @@ before and what comes next. One page per task in `kb/tasks/`; its `status` place
 A task points to its ticket for counts and status; it never copies them.
 
 <TaskBoard />
+
+<RenderStamp {signature} />

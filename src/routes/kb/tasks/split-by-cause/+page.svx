@@ -4,10 +4,17 @@ title: 'Split a merged ticket by cause before it is marked known'
 owner: support desk
 status: active
 reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
 
 **Active** — done once, for #4471 ([#4471 split](/kb/incidents/4471-split)); as a standing rule it is
 [decision 0002](/kb/decisions/0002-split-by-cause), **proposed**, waiting for Rune (product) and the desk.
 
 How: place every report by what its body says (`#lib/kb/symptoms`), then one ticket per problem.
 It changes how [merge by subject](/kb/tasks/dedupe-by-subject) ends, not how it starts.
+
+<RenderStamp {signature} />

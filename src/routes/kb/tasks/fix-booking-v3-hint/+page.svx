@@ -4,7 +4,12 @@ title: 'Fix the booking-v3 date hint'
 owner: support desk
 status: planned
 reviewed: 2026-11-11
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
+
+<script>
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
 
 **Planned, found 2026-11-11** in the #4471 split. booking-v3's form prints `MM/DD/YYYY` under its date
 field; day-first tenants type what it says and the form reads it day first.
@@ -14,3 +19,5 @@ status — read it there.
 
 Independent of the [parser fix](/kb/tasks/fix-parser-day-first): fixing the parser leaves these broken, and the
 other way round.
+
+<RenderStamp {signature} />

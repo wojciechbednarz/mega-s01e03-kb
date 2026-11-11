@@ -19,11 +19,11 @@ Since April, people have told us their bookings land on the wrong day: a month f
 first. The fix is queued.
 
 <Callout>
-Split: three problems, one ticket each.
+Split: two causes, one ticket each.
 </Callout>
 
-**Update 2026-11-11:** read by what each report says, #4471 holds three problems, not one — see
-[#4471 split](/kb/incidents/4471-split), one ticket per problem.
+**Update 2026-11-11:** by the desk's own cause rule, #4471 holds two causes, not one — see
+[#4471 split](/kb/incidents/4471-split), one ticket per cause.
 
 ## What was merged
 

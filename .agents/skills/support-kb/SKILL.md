@@ -27,7 +27,10 @@ Answers three questions: how the desk triages (`kb/triage/`), what an incident t
 | Filing or updating tickets | [tickets](references/tickets.md) |
 | Moving or adding structure | [structure log](references/structure-log.md) |
 
-## Before a push
+## Before a push, before a claim
 
-`npm run build && rm -rf rendered && cp -r build rendered` — the page as the desk sees it is committed.
-A fresh clone builds, `rendered/` matches it, the page has no typed counts, the signature is exact.
+`npm run build && rm -rf rendered && cp -r build rendered`, then
+`bun .agents/skills/support-kb/scripts/sanitize.ts --build` — must print `clean`. It checks every page's
+frontmatter and signature, links, typed counts, that the export, `causes.ts` and decision 0001 are
+unchanged, that the GitHub tickets equal what `issue-bodies.ts` generates, and that `rendered/` is a fresh
+build. Why: a kb that contradicts its tickets is wrong whatever a reader does, and by hand we missed it.
