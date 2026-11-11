@@ -1,0 +1,12 @@
+# Tickets (GitHub issues = the desk's tickets)
+
+One ticket per problem, each with how many reports it covers: one problem, one fix, one thread with a count.
+
+**Generate, never type:** `bun .agents/skills/support-kb/scripts/issue-bodies.ts` prints title, labels and
+body per problem from the same data and placement the page uses, so ticket and page can't disagree.
+Show it to a person before `gh issue create` / `gh issue edit`: tickets are public.
+
+- **Title:** `<what goes wrong, lowercase, in the desk's words> · <N> reports from #<ticket>` — the kb's titles are lowercase `id · point`, and the desk matches by subject line.
+- **Labels, one axis each:** `bug` · `split-from-<ticket>` · `cause:<problem>` · `has-inferred` — one meaning per label, one question per filter.
+- **Body:** count first · problem · fix · where the other problems went · placed by text / desk / inferred (inferred named with basis) · link to the split page · ids folded. The page is the home of the explanation.
+- The split page links each problem to its ticket through `src/lib/data/split-<ticket>.json`.
