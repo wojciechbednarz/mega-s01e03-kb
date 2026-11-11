@@ -50,3 +50,51 @@ export function symptomOf(r: Pick<Report, 'body'>): Symptom {
   // pair of dates to compare. A test can't decide it; a person reads it.
   return 'no-date';
 }
+
+// ── Placing every report: strongest evidence first ─────────────────────────────────────────
+// 1. text     the dates in the body (symptomOf): proof.
+// 2. desk     the desk's own record (desk-notes.json): people read it that way.
+// 3. inferred last resort, for reports 1 and 2 left open: what the reports from the same tenant
+//             through the same channel show. It describes the customer, not the report, so it
+//             runs last and says so. Needs MIN_SIBLINGS placed siblings, MIN_SHARE of them alike.
+export const MIN_SIBLINGS = 5;
+export const MIN_SHARE = 0.9;
+
+export type Evidence = 'text' | 'desk' | 'inferred' | 'none';
+export type Placed = { symptom: Symptom; evidence: Evidence; basis?: string };
+
+export function place(
+  reports: Report[],
+  deskOneDay: readonly string[],
+): Map<string, Placed> {
+  const out = new Map<string, Placed>();
+  for (const r of reports) {
+    const s = symptomOf(r);
+    if (s === 'swap' || s === 'one-day') out.set(r.id, { symptom: s, evidence: 'text' });
+    else if (deskOneDay.includes(r.id)) out.set(r.id, { symptom: 'one-day', evidence: 'desk' });
+  }
+  for (const r of reports) {
+    if (out.has(r.id)) continue;
+    const siblings = reports.filter(
+      // Only siblings placed by text or desk: an inference never feeds another inference.
+      (o) => o.id !== r.id && o.tenant === r.tenant && o.channel === r.channel &&
+        (out.get(o.id)?.evidence === 'text' || out.get(o.id)?.evidence === 'desk'),
+    );
+    const counts = new Map<Symptom, number>();
+    for (const o of siblings) {
+      const s = out.get(o.id)!.symptom;
+      counts.set(s, (counts.get(s) ?? 0) + 1);
+    }
+    const [top, n] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0] ?? ['no-date', 0];
+    if (siblings.length >= MIN_SIBLINGS && n / siblings.length >= MIN_SHARE) {
+      out.set(r.id, {
+        symptom: top,
+        evidence: 'inferred',
+        basis: `${n} of ${siblings.length} ${r.tenant} ${r.channel} reports are ${top}`,
+      });
+    } else {
+      out.set(r.id, { symptom: 'no-date', evidence: 'none' });
+    }
+  }
+  return out;
+}
