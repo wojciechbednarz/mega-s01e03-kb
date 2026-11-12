@@ -58,7 +58,7 @@ const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1
 const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
 // Each count is what a reader of the kb sees: the export's own view, CauseTable on the #4471 page
 // (claim 30 hint: "Where did your harness take each count from, and is that what a reader of the kb sees?").
-const SEEN = 'Count: as a reader of the kb sees it — the #4471 view (`src/lib/kb/CauseTable.svelte`, as exported)';
+const SEEN = 'Count: as a reader of the kb sees it — its row in the Tickets table on the [#4471 split page](' + PAGE_OUT + '), the desk\'s own view (`CauseTable`, as exported)';
 
 export function tickets() {
   // A ticket is the cause most of its reports share (causes.ts ticketCause): the big ticket keeps its own
@@ -68,7 +68,8 @@ export function tickets() {
     // #7's, so they leave the cause they are filed under (causes.ts would put them in parser).
     const ownOneDay = Boolean(issueNo('one-day-move'));
     const filedHere = merged.filter((r) => counted(r) === cause);
-    const rs = ownOneDay ? filedHere.filter((r) => !notes.oneDayMove.includes(r.id)) : filedHere;
+    const rs = filedHere; // the count a reader sees: the cause's row (claim 34; claim 33's 374 disagreed with the page)
+    void ownOneDay;
     const oneDay = filedHere.filter((r) => notes.oneDayMove.includes(r.id));
     const others = CAUSES.filter((o) => o !== cause).map((o) => (issueNo(o) ? `${o} → #${issueNo(o)}` : `${o} → stays in #${split.ticket}, its own cause`)).join(' · ');
     const days = rs.map((r) => r.receivedAt).sort();
@@ -91,7 +92,7 @@ export function tickets() {
       '',
       `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
       ...(oneDay.length
-        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`): ${oneDay.map((r) => r.id).join(', ')}. The desk files them here by tenant; they are counted once, in #${issueNo('one-day-move')}, not here.`]
+        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`): ${oneDay.map((r) => r.id).join(', ')}. Counted here, where the desk files them; the problem itself is #${issueNo('one-day-move')}.`]
         : []),
       '',
       `Tenants (${tenantList.length}): ${tenantList.join(', ')} · first ${days[0].slice(0, 10)}, last ${days.at(-1)!.slice(0, 10)}.`,
@@ -123,7 +124,7 @@ function oneDayTicket() {
     '',
     `**Fix:** ${ABOUT[cause].fix}`,
     '',
-    `**Counted once, here:** the desk files them under ${filed} by tenant (\`causes.ts\`); that ticket does not count them.`,
+    `**Also counted:** where the desk files them by tenant (\`causes.ts\`): ${filed}.`,
     '',
     `${SEEN}: "${rs.length} reports read as a one-day move; filed under parser by tenant".`,
     '',
@@ -131,7 +132,7 @@ function oneDayTicket() {
     '',
     `Reports covered (${rs.length}): ${uniq(rs).join(', ')}`,
   ].join('\n');
-  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: uniq(rs), alsoCounted: false };
+  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: uniq(rs), alsoCounted: true };
 }
 
 if (import.meta.main) for (const t of tickets()) console.log(JSON.stringify(t));

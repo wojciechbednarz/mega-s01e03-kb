@@ -2,7 +2,7 @@
 layout: runbook
 type: Incident Split
 title: '#4471 split · two causes, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7); every report is counted once.'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7); each with the count a reader sees for it.'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -31,6 +31,7 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 <script>
   import CauseTable from '#lib/kb/CauseTable.svelte';
   import ReportedMost from '#lib/kb/ReportedMost.svelte';
+  import TicketCounts from '#lib/kb/TicketCounts.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
@@ -53,11 +54,14 @@ subject, different cause is normal here.
 <CauseTable ticket={4471} />
 
 Counts are the desk's own view, as it was exported: the table above is the kb's `CauseTable`, the same one
-the [#4471 page](/kb/incidents/4471) shows. Tickets: **parser** →
-[issue #6](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6) · **hint** →
-[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5) · **one-day moves** (the note under the table) →
-[issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). Each report is counted in **one** ticket: the
-one-day moves the table's note files under parser are #7's, so the parser ticket counts the parser row less that note.
+the [#4471 page](/kb/incidents/4471) shows.
+
+## The tickets, with the count a reader sees for each
+
+Each ticket takes its count from its row here, which is computed with the desk's own functions, exactly as the
+table above shows it:
+
+<TicketCounts ticket={4471} />
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
   swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
@@ -66,8 +70,8 @@ one-day moves the table's note files under parser are #7's, so the parser ticket
   booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 - **The desk's one-day notes** — the desk read a few reports as a date moving by one day
   (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday — a time-zone fault the
-  parser fix does not stop. The desk files them under parser by tenant (`causes.ts`); they are counted once,
-  in their own ticket, [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7), not in the parser ticket. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+  parser fix does not stop. The desk files them under parser by tenant (`causes.ts`), so they are in the
+  parser count too; the problem itself has its own ticket, [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
 ## What users report most
 

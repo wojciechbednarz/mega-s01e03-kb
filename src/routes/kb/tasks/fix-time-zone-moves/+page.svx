@@ -13,8 +13,8 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 
 **Planned.** The desk read a few reports as a date moving by **one day**, not swapped
 (`desk-notes.json`) — a time-zone fault the parser fix does not stop. **Ticket:**
-[issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). The desk files them under parser by tenant; the
-[parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6) does not count them.
+[issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). The desk files them under parser by tenant, so the
+[parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6) counts them too.
 
 Done when dates keep their day across time zones (invites, reminders).
 
