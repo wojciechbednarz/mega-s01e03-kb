@@ -77,6 +77,12 @@ for (const t of want) {
   if (head['cause'] !== t.cause) fail('R3 tie', `#${i.number}: cause ${head['cause']} ≠ ${t.cause}`);
   if (head['reports'] !== String(t.count)) fail('R3 tie', `#${i.number}: reports ${head['reports']} ≠ ${t.count} computed`);
 }
+// R6 · every cause's ticket is open (claim 22, H1 in analysis-2026-11-12: the export's CauseTable prints
+// "no ticket of its own" for hint, and a closed ticket may count as none)
+for (const c of homeCauses) {
+  const i = inRound.find((x) => x.number === issueOf(c));
+  if (i && i.state !== 'OPEN') fail('R6 tickets open', `cause ${c}: #${i.number} is ${i.state.toLowerCase()} (${i.stateReason || 'no reason'})`);
+}
 // R4 · the tickets split the big ticket exactly: every report once
 const placed = want.flatMap((t) => t.ids);
 const unique = new Set(placed);
