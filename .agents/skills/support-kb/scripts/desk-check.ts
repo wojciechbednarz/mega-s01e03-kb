@@ -1,0 +1,113 @@
+// Desk check: read the repo the way the desk does, and fail where the desk could not match our tickets
+// to the big ticket. It is our MODEL of the desk, not the desk: every refusal that this check did not
+// predict is a fact about the desk that belongs here as a new rule (with the claim number that taught it).
+//
+//   bun .agents/skills/support-kb/scripts/desk-check.ts      # exits 1 on any ✗
+//
+// What it reads:
+//   - the home for the causes: src/lib/data/split-4471.json (cause → ticket). Nothing else may name a cause.
+//   - the kb as the desk sees it: rendered/**/*.html (text only)
+//   - every GitHub issue created after this round started (the round = the page signature's iat)
+//   - the ticket bodies the data generates (issue-bodies.ts)
+import { spawnSync } from 'node:child_process';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { CAUSES } from '../../../../src/lib/kb/causes.ts';
+import { DESK_REF, tickets } from './issue-bodies.ts';
+
+const root = new URL('../../../../', import.meta.url).pathname;
+const REPO = 'wojciechbednarz/mega-s01e03-kb';
+const errors: string[] = [];
+const ok = (m: string) => console.log('  ✓ ' + m);
+const fail = (rule: string, m: string) => errors.push(`[${rule}] ${m}`);
+
+const walk = (d: string): string[] =>
+  readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
+const gh = (args: string[]) => {
+  const r = spawnSync('gh', args, { encoding: 'utf8' });
+  if (r.status !== 0) throw new Error(`gh ${args.join(' ')}: ${r.stderr}`);
+  return JSON.parse(r.stdout);
+};
+
+// ── the home for the causes
+const home = JSON.parse(readFileSync(join(root, 'src/lib/data/split-4471.json'), 'utf8')) as {
+  ticket: number;
+  tickets: Record<string, { url: string; state?: string }>;
+};
+const homeCauses = Object.keys(home.tickets);
+const issueOf = (c: string) => Number(home.tickets[c].url.match(/issues\/(\d+)$/)?.[1]);
+
+// R1 · the home and the desk's code name the same causes
+const codeOnly = CAUSES.filter((c) => !homeCauses.includes(c));
+const homeOnly = homeCauses.filter((c) => !(CAUSES as readonly string[]).includes(c));
+if (codeOnly.length) fail('R1 home = code', `causes.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
+if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which causes.ts does not know`);
+if (!codeOnly.length && !homeOnly.length) ok(`home names the code's causes: ${homeCauses.join(', ')}`);
+
+// ── the round
+const page = readFileSync(join(root, 'src/routes/kb/incidents/4471-split/+page.svx'), 'utf8');
+const sig = page.match(/^signature:\s*'?([^'\n]+)'?$/m)?.[1] ?? '';
+const claims = JSON.parse(Buffer.from(sig.split('.')[1] ?? '', 'base64url').toString() || '{}');
+const roundStart = new Date((claims.iat ?? 0) * 1000);
+
+// ── tickets on GitHub created in this round
+const issues = gh(['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '200', '--json', 'number,title,body,state,stateReason,createdAt']) as {
+  number: number; title: string; body: string; state: string; stateReason: string; createdAt: string;
+}[];
+const inRound = issues.filter((i) => new Date(i.createdAt) >= roundStart);
+const old = issues.length - inRound.length;
+ok(`${inRound.length} issues created after the round started (${roundStart.toISOString()})${old ? `, ${old} older ignored` : ''}`);
+
+// R2 · every ticket the desk will read is a cause's ticket: no stubs, no extras
+const homeIssues = new Set(homeCauses.map(issueOf));
+for (const i of inRound)
+  if (!homeIssues.has(i.number))
+    fail('R2 no stray ticket', `#${i.number} (${i.state.toLowerCase()}) "${i.title}" is read by the desk but is no cause's ticket in split-4471.json`);
+for (const c of homeCauses)
+  if (!inRound.some((i) => i.number === issueOf(c))) fail('R2 no stray ticket', `cause ${c}: #${issueOf(c)} was not created in this round`);
+
+// R3 · each ticket carries the tie to the big ticket and to the signed page, and its own count
+const want = tickets();
+for (const t of want) {
+  const i = inRound.find((x) => String(x.number) === t.issue);
+  if (!i) continue;
+  const head = Object.fromEntries(i.body.split('\n').slice(0, 6).map((l) => l.split(/:\s*/, 2)).filter((p) => p.length === 2));
+  if (head['desk-ticket'] !== String(home.ticket)) fail('R3 tie', `#${i.number}: no "desk-ticket: ${home.ticket}" line`);
+  if (head['desk-ref'] !== DESK_REF) fail('R3 tie', `#${i.number}: desk-ref ${head['desk-ref'] ?? 'missing'} ≠ the page's ${DESK_REF}`);
+  if (head['cause'] !== t.cause) fail('R3 tie', `#${i.number}: cause ${head['cause']} ≠ ${t.cause}`);
+  if (head['reports'] !== String(t.count)) fail('R3 tie', `#${i.number}: reports ${head['reports']} ≠ ${t.count} computed`);
+}
+// R4 · the tickets split the big ticket exactly: every report once
+const placed = want.flatMap((t) => t.ids);
+const unique = new Set(placed);
+const merged = JSON.parse(readFileSync(join(root, 'src/lib/data/reports-4471.json'), 'utf8')) as { id: string; mergedInto: number | null }[];
+const all = new Set(merged.filter((r) => r.mergedInto === home.ticket).map((r) => r.id));
+if (unique.size !== placed.length) fail('R4 exact split', `${placed.length - unique.size} reports sit in two tickets`);
+if (unique.size !== all.size) fail('R4 exact split', `tickets hold ${unique.size} reports, #${home.ticket} has ${all.size}`);
+if (unique.size === placed.length && unique.size === all.size) ok(`tickets split #${home.ticket} exactly: ${want.map((t) => `${t.cause} ${t.count}`).join(' + ')} = ${all.size}`);
+
+// R5 · the kb, as the desk sees it, names no cause without a ticket (claim 20's hint: "Which cause on
+// the kb has no ticket yet?"). Phrases are our model of "names a cause"; add one when a refusal teaches it.
+const UNTICKETED = [
+  /not a ticket yet/i, /no ticket (yet|of its own)/i, /cause of (its|their) own/i, /its own ticket/i,
+  /\bno cause\b/i, /\bunplaced\b/i, /has no ticket/i,
+];
+const text = (f: string) =>
+  readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ');
+let hits = 0;
+for (const f of walk(join(root, 'rendered')).filter((f) => f.endsWith('.html'))) {
+  const t = text(f);
+  for (const re of UNTICKETED) {
+    const m = t.match(re);
+    if (!m) continue;
+    hits++;
+    const at = m.index ?? 0;
+    fail('R5 kb names no unticketed cause', `${f.replace(root, '')}: "…${t.slice(Math.max(0, at - 70), at + m[0].length + 30).trim()}…"`);
+  }
+}
+if (!hits) ok('rendered kb names no cause without a ticket');
+
+for (const e of errors) console.log('  ✗ ' + e);
+console.log(errors.length ? `\ndesk-check: ${errors.length} error(s)` : '\ndesk-check: clean');
+process.exit(errors.length ? 1 : 0);

@@ -82,7 +82,14 @@ for (const i of issues) {
 }
 ok(`${want.length} tickets compared with GitHub · ${total} reports placed`);
 
-// 4. Rendered output is a fresh build
+// 4. The local desk: our model of how the desk matches tickets to #4471 (desk-check.ts)
+{
+  const r = spawnSync('bun', [join(root, '.agents/skills/support-kb/scripts/desk-check.ts')], { cwd: root, encoding: 'utf8' });
+  for (const l of r.stdout.split('\n').filter((l) => l.includes('✗'))) errors.push('desk-check ' + l.trim().replace(/^✗ /, ''));
+  if (r.status === 0) ok('desk-check clean');
+}
+
+// 5. Rendered output is a fresh build
 if (process.argv.includes('--build')) {
   sh('npm', ['run', 'build']);
   const text = (f: string) => readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<link[^>]*>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
