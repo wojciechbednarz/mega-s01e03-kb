@@ -52,7 +52,8 @@ export const ABOUT: Record<Cause | 'one-day-move', { title: string; problem: str
   },
 };
 
-export const titleOf = (c: Cause | 'one-day-move', n: number) => `${ABOUT[c].title} · ${n} reports from #${split.ticket}`;
+// The count is the first number in the title: "booking-v3 …" put a 3 ahead of the hint's count (claim 35).
+export const titleOf = (c: Cause | 'one-day-move', n: number) => `${n} reports from #${split.ticket} · ${ABOUT[c].title}`;
 const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1];
 
 const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
@@ -75,9 +76,9 @@ export function tickets() {
     const days = rs.map((r) => r.receivedAt).sort();
     const tenantList = [...new Set(rs.map((r) => r.tenant))].sort();
     const body = [
+      `reports: ${rs.length}`, // the count comes first: a reader (or a parser) meets it before any other number (claim 35)
       `desk-ticket: ${split.ticket}`,
       `cause: ${cause}`,
-      `reports: ${rs.length}`,
       `desk-ref: ${DESK_REF}`,
       '',
       `**Reports: ${rs.length}** — split out of support ticket #${split.ticket} (support desk ticket, not an issue in this repo).`,
@@ -113,9 +114,9 @@ function oneDayTicket() {
   const rs = merged.filter((r) => notes.oneDayMove.includes(r.id));
   const filed = [...new Set(rs.map((r) => counted(r)))].map((c) => `${c} → #${issueNo(c!)}`).join(' · ');
   const body = [
+    `reports: ${rs.length}`,
     `desk-ticket: ${split.ticket}`,
     `cause: ${cause}`,
-    `reports: ${rs.length}`,
     `desk-ref: ${DESK_REF}`,
     '',
     `**Reports: ${rs.length}** — split out of support ticket #${split.ticket} (support desk ticket, not an issue in this repo).`,
