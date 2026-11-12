@@ -15,8 +15,10 @@ const data = (p: string) => JSON.parse(readFileSync(root + 'src/lib/data/' + p, 
 const reports = data('reports-4471.json') as Report[];
 const notes = data('desk-notes.json') as { oneDayMove: string[] };
 const split = data('split-4471.json') as { ticket: number; countBy?: string; tickets: Record<string, { label: string; url: string }> };
-// How the desk counts (claim 27: "The desk counts with its own view, as it was exported."): by its own intake tag.
+// How the desk counts. Claim 27: "The desk counts with its own view, as it was exported." Claim 29 (intake
+// tags): "Those are intake's numbers." countBy 'rows' = the export's rows as exported, duplicates kept.
 const counted = (r: Report) => (split.countBy === 'intakeTag' ? r.meta.intakeTag : causeOf(r, tenants.get(r.tenant)));
+const uniq = (rs: Report[]) => [...new Set(rs.map((r) => r.id))];
 const tenants = new Map<string, Tenant>(
   readdirSync(root + 'src/lib/data/tenants').map((f) => {
     const t = data('tenants/' + f) as Tenant;
@@ -54,7 +56,7 @@ export const ABOUT: Record<Cause | 'one-day-move', { title: string; problem: str
 export const titleOf = (c: Cause | 'one-day-move', n: number) => `${ABOUT[c].title} · ${n} reports from #${split.ticket}`;
 const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1];
 
-const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
+const merged = (split.countBy === 'rows' ? reports : uniqueById(reports)).filter((r) => r.mergedInto === split.ticket);
 
 export function tickets() {
   // A ticket is the cause most of its reports share (causes.ts ticketCause): the big ticket keeps its own
@@ -88,10 +90,10 @@ export function tickets() {
       '',
       `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
       '',
-      `Reports covered (${rs.length}), each \`mergedInto: ${split.ticket}\` in the export: ${rs.map((r) => r.id).join(', ')}`,
+      `Reports covered (${rs.length} rows as exported, ${uniq(rs).length} ids), each \`mergedInto: ${split.ticket}\` in the export: ${uniq(rs).join(', ')}`,
     ].join('\n');
     const labels = ['bug', `split-from-${split.ticket}`, `cause:${cause}`];
-    return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels, body, count: rs.length, ids: rs.map((r) => r.id) };
+    return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels, body, count: rs.length, ids: uniq(rs) };
   }).concat(issueNo('one-day-move') ? [oneDayTicket()] : []);
 }
 
@@ -117,9 +119,9 @@ function oneDayTicket() {
     '',
     `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
     '',
-    `Reports covered (${rs.length}), each \`mergedInto: ${split.ticket}\` in the export: ${rs.map((r) => r.id).join(', ')}`,
+    `Reports covered (${rs.length} rows as exported, ${uniq(rs).length} ids), each \`mergedInto: ${split.ticket}\` in the export: ${uniq(rs).join(', ')}`,
   ].join('\n');
-  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: rs.map((r) => r.id), alsoCounted: true };
+  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: uniq(rs), alsoCounted: true };
 }
 
 if (import.meta.main) for (const t of tickets()) console.log(JSON.stringify(t));

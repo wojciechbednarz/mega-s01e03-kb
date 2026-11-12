@@ -2,7 +2,7 @@
 layout: runbook
 type: Incident Split
 title: '#4471 split · two causes, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7), counted by the desk''s own intake tags.'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7), counted as the export holds them.'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -51,8 +51,8 @@ subject, different cause is normal here.
 
 <SplitTable ticket={4471} />
 
-Counts are the desk's own: each report counted under the tag intake gave it, as the export holds it
-(`meta.intakeTag`). The cause rule above says which fix a report needs.
+Counts are the desk's view as it was exported: every row of the ticket system's export, by the cause rule,
+with the rows its overlapping pages repeat. Each ticket lists its report ids once.
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
   swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
