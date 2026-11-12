@@ -133,7 +133,7 @@ function oneDayTicket() {
     '',
     `${SEEN}: the \`one-day-move\` row.`,
     '',
-    `**Which reports:** the ones the desk noted as a one-day move (\`desk-notes.json\`) whose own text shows one: two dates or two weekdays one day apart, or "one day off" (\`src/lib/kb/one-day.ts\`).${dropped.length ? ` Not ${dropped.join(', ')}: its text names no date and no day, so it stays with its cause.` : ''}`,
+    `**Which reports:** the ones the desk noted as a one-day move (\`desk-notes.json\`) whose own text shows one: two dates or two weekdays one day apart, or "one day off" (\`src/lib/kb/one-day.ts\`).${dropped.length ? ` ${dropped.length === 1 ? 'One desk note is' : `${dropped.length} desk notes are`} not here: the report names no date and no day, so it stays with its cause (the split page says which).` : ''}`,
     '',
     `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
     '',
