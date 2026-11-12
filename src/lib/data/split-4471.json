@@ -2,8 +2,8 @@
   "ticket": 4471,
   "tickets": {
     "parser": {
-      "label": "#4471 itself (its own cause)",
-      "url": "/kb/incidents/4471"
+      "label": "issue #6",
+      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6"
     },
     "hint": {
       "label": "issue #5",

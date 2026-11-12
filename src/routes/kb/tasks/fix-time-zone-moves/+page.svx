@@ -13,7 +13,7 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 
 **Planned.** The desk read a few reports as a date moving by **one day**, not swapped
 (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports, counted and footnoted in
-the parser's ticket, [#4471](/kb/incidents/4471).
+the [parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6).
 
 Done when someone confirms the parser fix clears them too. What they find goes on the parser ticket.
 

@@ -1,8 +1,8 @@
 ---
 layout: runbook
 type: Incident Split
-title: '#4471 split · one cause merged in by mistake'
-description: 'Support ticket #4471 merged 412 date reports as one. By the desk''s rule its own cause is parser (379); the 33 hint reports were merged into it by mistake and now have their own ticket, #4.'
+title: '#4471 split · two causes, not one'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser 379 (#6), hint 33 (#5).'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -35,10 +35,9 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **#4471 holds two causes, not one.** Every report in it is about a wrong date, so they were merged as one
-issue. By the desk's own rule (`causes.ts`) a ticket is the cause most of its reports share, and the rest
-were merged into the wrong place: #4471 is the **parser** ticket, and the **hint** reports were merged into
-it by mistake. They need a different fix, so they now have a ticket of their own,
-[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
+issue — but by the desk's own rule (`causes.ts`) they come from two causes that need two fixes, so each
+cause has a ticket of its own: **parser** ([issue #6](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6))
+and **hint** ([issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5)).
 
 <Callout>
 
@@ -53,13 +52,13 @@ subject, different cause is normal here.
 <SplitTable ticket={4471} />
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
-  swapped. This is what the [#4471 page](/kb/incidents/4471) describes, and #4471 stays its ticket. One fix: read dates in the tenant's order.
+  swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
 - **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
   booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 - **The desk's one-day notes** — the desk read a few reports as a date moving by one day
-  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: they stay in #4471,
-  footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: counted in the parser
+  ticket and footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
 ## Why one ticket held two causes
 
