@@ -1,0 +1,14 @@
+#!/bin/bash
+# Appends the commit to the challenge inbox as an event. Always exits 0.
+INBOX="${MEGA_INBOX:-/home/wojslaw/repos/learning-helper-claude-proj/learning/mega/lessons/s01e03-knowledge-systems/challenge/inbox.jsonl}"
+H=$(git rev-parse HEAD 2>/dev/null)
+H="$H" INBOX="$INBOX" MSG="$(git log -1 --format=%B 2>/dev/null)" FILES="$(git show --name-only --format= HEAD 2>/dev/null)" python3 -I - <<'PY' || echo "post-commit hook: failed (ignored)" >&2
+import json, os, datetime
+h = os.environ["H"]
+rec = {"id": "commit-" + h[:7], "tool": "git-commit",
+       "date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
+       "reply": {"commit": h, "message": os.environ["MSG"].strip(), "files": [x for x in os.environ["FILES"].splitlines() if x]},
+       "source": "hook", "filed": False}
+open(os.environ["INBOX"], "a", encoding="utf-8").write(json.dumps(rec, ensure_ascii=False) + "\n")
+PY
+exit 0

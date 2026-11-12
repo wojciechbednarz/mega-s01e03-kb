@@ -30,6 +30,7 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 
 <script>
   import CauseTable from '#lib/kb/CauseTable.svelte';
+  import ReportedMost from '#lib/kb/ReportedMost.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
@@ -67,6 +68,12 @@ the [#4471 page](/kb/incidents/4471) shows. Tickets: **parser** →
   parser fix does not stop. By the desk's rule (`causes.ts`) they stay counted in the parser ticket, where
   they're filed, and the problem the desk found has its own ticket too:
   [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+
+## What users report most
+
+The state of #4471 by problem, and what its reports say most often (each report counted once):
+
+<ReportedMost ticket={4471} />
 
 ## Why one ticket held two causes
 
