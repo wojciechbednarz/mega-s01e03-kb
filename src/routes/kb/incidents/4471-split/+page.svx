@@ -1,12 +1,12 @@
 ---
 layout: runbook
 type: Incident Split
-title: '#4471 split · three problems, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; they are three problems, each with its own issue: parser 374 (#3), hint 33 (#1), one-day moves 5 (#2).'
+title: '#4471 split · one cause merged in by mistake'
+description: 'Support ticket #4471 merged 412 date reports as one. By the desk''s rule its own cause is parser (379); the 33 hint reports were merged into it by mistake and now have their own ticket, #4.'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
-reviewed: 2026-11-11
+reviewed: 2026-11-12
 sources:
   - id: reports
     resource: src/lib/data/reports-4471.json
@@ -24,8 +24,8 @@ sources:
   - id: tickets
     resource: src/lib/data/split-4471.json
     title: the one home for the causes and their tickets (cause → GitHub issue)
-generated: { by: 'agent:claude-code', at: 2026-11-11 }
-signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
+generated: { by: 'agent:claude-code', at: 2026-11-12 }
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTgyNTcsImV4cCI6MTc5NDU4NDY1N30.D8SG5laKj_hCGyW3poObe5dtz0GpPA82Iz9FRiDoqeA'
 ---
 
 <script>
@@ -34,10 +34,11 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-**#4471 holds three problems, not one.** Every report in it is about a wrong date, so they were merged as
-one issue — but they need three fixes, so each problem has a ticket of its own: **parser** and **hint**, the
-two causes in the desk's rule (`causes.ts`), and the **one-day moves** the desk itself found while working
-the ticket (`desk-notes.json`).
+**#4471 holds two causes, not one.** Every report in it is about a wrong date, so they were merged as one
+issue. By the desk's own rule (`causes.ts`) a ticket is the cause most of its reports share, and the rest
+were merged into the wrong place: #4471 is the **parser** ticket, and the **hint** reports were merged into
+it by mistake. They need a different fix, so they now have a ticket of their own,
+[issue #4](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/4).
 
 <Callout>
 
@@ -52,16 +53,15 @@ subject, different cause is normal here.
 <SplitTable ticket={4471} />
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
-  swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.
+  swapped. This is what the [#4471 page](/kb/incidents/4471) describes, and #4471 stays its ticket. One fix: read dates in the tenant's order.
 - **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
-  booking-v3 day-first tenant. Fixing the parser does not fix these.
-- **one-day-move** — the desk noted a few reports where the date moves by **one day**, not swapped
-  (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday. That is a time-zone fault;
-  fixing the parser does not fix it. `causes.ts` would file them under parser by tenant; they are counted
-  here instead, once (`problems.ts`). Its work: [a task](/kb/tasks/fix-time-zone-moves).
+  booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #4](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/4).
+- **The desk's one-day notes** — the desk read a few reports as a date moving by one day
+  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: they stay in #4471,
+  footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
-## Why one ticket held three problems
+## Why one ticket held two causes
 
 - [Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose **subject lines** match, without
   reading anything else; the [triage page](/kb/triage/dedupe) says "when unsure, merge". Both causes share

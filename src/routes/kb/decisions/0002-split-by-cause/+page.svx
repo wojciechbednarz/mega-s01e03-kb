@@ -4,7 +4,7 @@ title: '0002 · Before a ticket is marked known, split it by cause'
 owner: support desk
 status: proposed
 reviewed: 2026-11-11
-signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTgyNTcsImV4cCI6MTc5NDU4NDY1N30.D8SG5laKj_hCGyW3poObe5dtz0GpPA82Iz9FRiDoqeA'
 ---
 
 <script>
@@ -25,7 +25,7 @@ with *different* subjects about the same bug end up in separate tickets, merged 
 \#4471 showed the opposite cost, which 0001 does not name: reports with the **same** subject from
 **different** bugs end up in **one** ticket. "Invite came on the wrong day" was written about the parser
 bug and about the booking-v3 hint bug alike. The ticket was marked known with one fix queued, and one of
-its problems had nobody working on it ([#4471 split](/kb/incidents/4471-split)).
+its two causes had nobody working on it ([#4471 split](/kb/incidents/4471-split)).
 
 ## Decision (proposed)
 

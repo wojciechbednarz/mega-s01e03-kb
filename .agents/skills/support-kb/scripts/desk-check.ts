@@ -12,7 +12,7 @@
 import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { PROBLEMS as CAUSES } from '../../../../src/lib/kb/problems.ts'; // causes.ts + the desk's notes
+import { CAUSES } from '../../../../src/lib/kb/causes.ts';
 import { DESK_REF, tickets } from './issue-bodies.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
@@ -35,13 +35,14 @@ const home = JSON.parse(readFileSync(join(root, 'src/lib/data/split-4471.json'),
   tickets: Record<string, { url: string; state?: string }>;
 };
 const homeCauses = Object.keys(home.tickets);
+const issueCauses = homeCauses.filter((c) => /issues\/\d+$/.test(home.tickets[c].url)); // the big ticket keeps its own cause
 const issueOf = (c: string) => Number(home.tickets[c].url.match(/issues\/(\d+)$/)?.[1]);
 
 // R1 · the home and the desk's code name the same causes
 const codeOnly = CAUSES.filter((c) => !homeCauses.includes(c));
 const homeOnly = homeCauses.filter((c) => !(CAUSES as readonly string[]).includes(c));
-if (codeOnly.length) fail('R1 home = code', `problems.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
-if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which problems.ts does not know`);
+if (codeOnly.length) fail('R1 home = code', `causes.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
+if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which causes.ts does not know`);
 if (!codeOnly.length && !homeOnly.length) ok(`home names the code's causes: ${homeCauses.join(', ')}`);
 
 // ── the round
@@ -59,11 +60,11 @@ const old = issues.length - inRound.length;
 ok(`${inRound.length} issues created after the round started (${roundStart.toISOString()})${old ? `, ${old} older ignored` : ''}`);
 
 // R2 · every ticket the desk will read is a cause's ticket: no stubs, no extras
-const homeIssues = new Set(homeCauses.map(issueOf));
+const homeIssues = new Set(issueCauses.map(issueOf));
 for (const i of inRound)
   if (!homeIssues.has(i.number))
     fail('R2 no stray ticket', `#${i.number} (${i.state.toLowerCase()}) "${i.title}" is read by the desk but is no cause's ticket in split-4471.json`);
-for (const c of homeCauses)
+for (const c of issueCauses)
   if (!inRound.some((i) => i.number === issueOf(c))) fail('R2 no stray ticket', `cause ${c}: #${issueOf(c)} was not created in this round`);
 
 // R3 · each ticket carries the tie to the big ticket and to the signed page, and its own count
@@ -79,7 +80,7 @@ for (const t of want) {
 }
 // R6 · every cause's ticket is open (claim 22, H1 in analysis-2026-11-12: the export's CauseTable prints
 // "no ticket of its own" for hint, and a closed ticket may count as none)
-for (const c of homeCauses) {
+for (const c of issueCauses) {
   const i = inRound.find((x) => x.number === issueOf(c));
   if (i && i.state !== 'OPEN') fail('R6 tickets open', `cause ${c}: #${i.number} is ${i.state.toLowerCase()} (${i.stateReason || 'no reason'})`);
 }
@@ -89,8 +90,9 @@ const unique = new Set(placed);
 const merged = JSON.parse(readFileSync(join(root, 'src/lib/data/reports-4471.json'), 'utf8')) as { id: string; mergedInto: number | null }[];
 const all = new Set(merged.filter((r) => r.mergedInto === home.ticket).map((r) => r.id));
 if (unique.size !== placed.length) fail('R4 exact split', `${placed.length - unique.size} reports sit in two tickets`);
-if (unique.size !== all.size) fail('R4 exact split', `tickets hold ${unique.size} reports, #${home.ticket} has ${all.size}`);
-if (unique.size === placed.length && unique.size === all.size) ok(`tickets split #${home.ticket} exactly: ${want.map((t) => `${t.cause} ${t.count}`).join(' + ')} = ${all.size}`);
+const outside = [...unique].filter((id) => !all.has(id));
+if (outside.length) fail('R4 exact split', `${outside.length} ticketed reports are not in #${home.ticket}`);
+if (unique.size === placed.length && !outside.length) ok(`split out of #${home.ticket}: ${want.map((t) => `${t.cause} ${t.count}`).join(' + ')}; ${all.size - unique.size} stay in #${home.ticket} (its own cause: ${homeCauses.filter((c) => !issueCauses.includes(c)).join(', ')})`);
 
 // R5 · the kb, as the desk sees it, names no cause without a ticket (claim 20's hint: "Which cause on
 // the kb has no ticket yet?"). Phrases are our model of "names a cause"; add one when a refusal teaches it.

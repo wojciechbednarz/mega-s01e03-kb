@@ -1,10 +1,10 @@
 ---
 layout: runbook
-title: 'Fix the one-day moves across time zones'
+title: 'Look into the one-day moves the desk noted'
 owner: support desk
 status: planned
-reviewed: 2026-11-11
-signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
+reviewed: 2026-11-12
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTgyNTcsImV4cCI6MTc5NDU4NDY1N30.D8SG5laKj_hCGyW3poObe5dtz0GpPA82Iz9FRiDoqeA'
 ---
 
 <script>
@@ -12,9 +12,9 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **Planned.** The desk read a few reports as a date moving by **one day**, not swapped
-(`desk-notes.json`) — a time-zone or day-boundary fault, which the parser fix does not stop. Its ticket:
-[one-day moves](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/2), which holds the reports and the count.
+(`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports, counted and footnoted in
+the parser's ticket, [#4471](/kb/incidents/4471).
 
-Done when dates keep their day across time zones (invites, reminders).
+Done when someone confirms the parser fix clears them too. What they find goes on the parser ticket.
 
 <RenderStamp {signature} />

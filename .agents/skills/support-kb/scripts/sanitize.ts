@@ -61,7 +61,7 @@ const want = tickets();
 const total = want.reduce((n, t) => n + t.count, 0);
 const ids = new Set(want.flatMap((t) => t.ids));
 if (ids.size !== total) errors.push(`a report is in more than one ticket (${total} placements, ${ids.size} reports)`);
-const issues = JSON.parse(sh('gh', ['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '100', '--json', 'number,title,body,state,stateReason,labels']));
+const issues = JSON.parse(sh('gh', ['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '100', '--json', 'number,title,body,state,stateReason,labels,createdAt']));
 const split = JSON.parse(readFileSync(join(root, 'src/lib/data/split-4471.json'), 'utf8'));
 for (const t of want) {
   const i = issues.find((x: any) => String(x.number) === t.issue);
@@ -76,7 +76,9 @@ for (const t of want) {
   if (have !== [...t.labels].sort().join(',')) errors.push(`#${t.issue} labels ${have} ≠ ${t.labels.join(',')}`);
 }
 const linked = new Set(want.map((t) => t.issue));
-for (const i of issues) {
+// only this round's issues count (the round = the page signature's iat)
+const iat = JSON.parse(Buffer.from(([...sigs][0] ?? '').split('.')[1] ?? '', 'base64url').toString() || '{}').iat ?? 0;
+for (const i of issues.filter((x: any) => new Date(x.createdAt) >= new Date(iat * 1000))) {
   const split = i.labels.some((l: any) => l.name.startsWith('split-from-'));
   if (i.state === 'OPEN' && split && !linked.has(String(i.number))) errors.push(`#${i.number} is open and split-labelled but no cause maps to it`);
 }
