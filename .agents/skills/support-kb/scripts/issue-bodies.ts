@@ -56,7 +56,10 @@ export const ABOUT: Record<Cause | 'one-day-move', { title: string; problem: str
 export const titleOf = (c: Cause | 'one-day-move', n: number) => `${ABOUT[c].title} · ${n} reports from #${split.ticket}`;
 const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1];
 
-const merged = (split.countBy === 'rows' ? reports : uniqueById(reports)).filter((r) => r.mergedInto === split.ticket);
+const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
+// Each count is what a reader of the kb sees: the export's own view, CauseTable on the #4471 page
+// (claim 30 hint: "Where did your harness take each count from, and is that what a reader of the kb sees?").
+const SEEN = 'Count: as a reader of the kb sees it — the #4471 view (`src/lib/kb/CauseTable.svelte`, as exported)';
 
 export function tickets() {
   // A ticket is the cause most of its reports share (causes.ts ticketCause): the big ticket keeps its own
@@ -80,6 +83,8 @@ export function tickets() {
       `**Fix:** ${ABOUT[cause].fix}`,
       '',
       `**Not this ticket:** ${others}.`,
+      '',
+      `${SEEN}: the \`${cause}\` row.`,
       '',
       `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
       ...(oneDay.length
@@ -116,6 +121,8 @@ function oneDayTicket() {
     `**Fix:** ${ABOUT[cause].fix}`,
     '',
     `**Also counted:** where the desk files them by tenant (\`causes.ts\`): ${filed}.`,
+    '',
+    `${SEEN}: "${rs.length} reports read as a one-day move; filed under parser by tenant".`,
     '',
     `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
     '',

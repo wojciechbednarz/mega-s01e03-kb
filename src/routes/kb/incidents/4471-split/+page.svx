@@ -2,7 +2,7 @@
 layout: runbook
 type: Incident Split
 title: '#4471 split · two causes, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7), counted as the export holds them.'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser (#6), hint (#5) and the one-day moves the desk noted (#7), counted as the kb''s own view shows them.'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -29,7 +29,7 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 ---
 
 <script>
-  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
   import Callout from '#lib/kb/Callout.svelte';
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
@@ -49,10 +49,13 @@ subject, different cause is normal here.
 
 ## What #4471 really holds
 
-<SplitTable ticket={4471} />
+<CauseTable ticket={4471} />
 
-Counts are the desk's view as it was exported: every row of the ticket system's export, by the cause rule,
-with the rows its overlapping pages repeat. Each ticket lists its report ids once.
+Counts are the desk's own view, as it was exported: the table above is the kb's `CauseTable`, the same one
+the [#4471 page](/kb/incidents/4471) shows. Tickets: **parser** →
+[issue #6](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6) · **hint** →
+[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5) · **one-day moves** (the note under the table) →
+[issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7).
 
 - **parser** — the shared parser reads every date month first, so a day-first tenant's dates come out
   swapped. This is what the [#4471 page](/kb/incidents/4471) describes. One fix: read dates in the tenant's order.

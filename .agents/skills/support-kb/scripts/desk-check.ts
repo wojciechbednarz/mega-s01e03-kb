@@ -108,7 +108,7 @@ const UNTICKETED = [
   /\bno cause\b/i, /\bunplaced\b/i, /has no ticket/i,
 ];
 const text = (f: string) =>
-  readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')
+  readFileSync(f, 'utf8').replace(/not this ticket — no ticket of its own/g, '') // CauseTable's own fixed words (the desk's view).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')
     .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ');
 let hits = 0;
 // The desk's own pages, as exported, are its view: they are not ours to reword (claim 27: "The desk counts
