@@ -6,6 +6,7 @@
 //
 //   bun .agents/skills/support-kb/scripts/issue-bodies.ts     # dry run: print
 import { readdirSync, readFileSync } from 'node:fs';
+import { deskRef } from '../../../../src/lib/kb/desk-ref.ts';
 import { CAUSES, causeOf, uniqueById, type Cause, type Report, type Tenant } from '../../../../src/lib/kb/causes.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
@@ -22,6 +23,11 @@ const tenants = new Map<string, Tenant>(
 );
 
 const REPO = 'https://github.com/wojciechbednarz/mega-s01e03-kb';
+// The desk ref of the signed split page, derived from its signature exactly as the page's RenderStamp does.
+const PAGE = readFileSync(root + 'src/routes/kb/incidents/4471-split/+page.svx', 'utf8');
+const SIGNATURE = PAGE.match(/^signature:\s*'?([^'\n]+)'?$/m)?.[1];
+if (!SIGNATURE) throw new Error('split page is not signed');
+export const DESK_REF = deskRef(SIGNATURE);
 const PAGE_SRC = `${REPO}/blob/main/src/routes/kb/incidents/4471-split/%2Bpage.svx`;
 const PAGE_OUT = `${REPO}/blob/main/rendered/kb/incidents/4471-split.html`;
 
@@ -54,6 +60,7 @@ export function tickets() {
       `desk-ticket: ${split.ticket}`,
       `cause: ${cause}`,
       `reports: ${rs.length}`,
+      `desk-ref: ${DESK_REF}`,
       '',
       `**Reports: ${rs.length}** — split out of support ticket #${split.ticket} (support desk ticket, not an issue in this repo).`,
       '',
@@ -70,7 +77,7 @@ export function tickets() {
       '',
       `Tenants (${tenantList.length}): ${tenantList.join(', ')} · first ${days[0].slice(0, 10)}, last ${days.at(-1)!.slice(0, 10)}.`,
       '',
-      `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}) · [as the desk sees it](${PAGE_OUT}).`,
+      `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
       '',
       `Reports covered (${rs.length}), each \`mergedInto: ${split.ticket}\` in the export: ${rs.map((r) => r.id).join(', ')}`,
     ].join('\n');
