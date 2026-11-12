@@ -7,18 +7,21 @@
   import split from '#lib/data/split-4471.json';
   import { groupByCause, readAs, uniqueById, type Report } from '#lib/kb/causes';
   import { tenantOf } from '#lib/kb/locales';
+  import { oneDayMoves } from '#lib/kb/one-day';
 
   let { ticket }: { ticket: number } = $props();
 
   const merged = uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket);
   const groups = groupByCause(merged, tenantOf);
+  // the desk's one-day notes, as far as each report's own text supports them (one-day.ts)
+  const oneDay = oneDayMoves(merged, notes.oneDayMove);
   const tickets = split.tickets as Record<string, { label: string; url: string }>;
   const rows = [
     // each report counted once: a cause's row less the one-day reports the note files under it (they are their own ticket)
-    ...groups.map((g) => ({ problem: g.cause as string, count: g.reports.length - (tickets['one-day-move'] ? readAs(g, notes.oneDayMove) : 0),
-      from: readAs(g, notes.oneDayMove) && tickets['one-day-move'] ? `the ${g.cause} row of the #${ticket} table, less the note under it` : `the ${g.cause} row of the #${ticket} table` })),
-    ...groups.filter((g) => readAs(g, notes.oneDayMove) > 0).map((g) => ({
-      problem: 'one-day-move', count: readAs(g, notes.oneDayMove), from: `the note under the #${ticket} table (filed under ${g.cause} by tenant)`,
+    ...groups.map((g) => ({ problem: g.cause as string, count: g.reports.length - (tickets['one-day-move'] ? readAs(g, oneDay) : 0),
+      from: readAs(g, oneDay) && tickets['one-day-move'] ? `the ${g.cause} row of the #${ticket} table, less the note under it` : `the ${g.cause} row of the #${ticket} table` })),
+    ...groups.filter((g) => readAs(g, oneDay) > 0).map((g) => ({
+      problem: 'one-day-move', count: readAs(g, oneDay), from: `the note under the #${ticket} table, where the report's own text shows a one-day move (filed under ${g.cause} by tenant)`,
     })),
   ];
 </script>

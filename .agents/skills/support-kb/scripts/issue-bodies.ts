@@ -8,6 +8,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { deskRef } from '../../../../src/lib/kb/desk-ref.ts';
 import { CAUSES, causeOf, uniqueById, type Cause, type Report, type Tenant } from '../../../../src/lib/kb/causes.ts';
+import { oneDayMoves } from '../../../../src/lib/kb/one-day.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
 const data = (p: string) => JSON.parse(readFileSync(root + 'src/lib/data/' + p, 'utf8'));
@@ -47,7 +48,7 @@ export const ABOUT: Record<Cause | 'one-day-move', { title: string; problem: str
   },
   'one-day-move': {
     title: 'dates move by one day across time zones',
-    problem: 'The desk found these while working #4471 (desk-notes.json, oneDayMove): the date is not swapped, it moves by one day — one client in Lisbon gets Tuesday, one in Toronto Monday. A time-zone or day-boundary fault.',
+    problem: 'The desk noted these while working #4471 (desk-notes.json, oneDayMove), and their own text shows it: the date is not swapped, it moves by one day — one client in Lisbon gets Tuesday, one in Toronto Monday. A time-zone or day-boundary fault.',
     fix: 'Where a date crosses time zones (invites, reminders). The parser fix does not stop these.',
   },
 };
@@ -57,6 +58,8 @@ export const titleOf = (c: Cause | 'one-day-move', n: number) => `${n} reports f
 const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1];
 
 const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
+// The one-day problem: the desk's notes, as far as each report's own text supports them (one-day.ts).
+export const ONE_DAY = oneDayMoves(merged, notes.oneDayMove);
 // Each count is what a reader of the kb sees: the export's own view, CauseTable on the #4471 page
 // (claim 30 hint: "Where did your harness take each count from, and is that what a reader of the kb sees?").
 const SEEN = 'Count: as a reader of the kb sees it — its row in the Tickets table on the [#4471 split page](' + PAGE_OUT + '), the desk\'s own view (`CauseTable`, as exported)';
@@ -70,8 +73,8 @@ export function tickets() {
     const ownOneDay = Boolean(issueNo('one-day-move'));
     const filedHere = merged.filter((r) => counted(r) === cause);
     // claim 38: every report in exactly one ticket — the desk-noted one-day reports are #7's only
-    const rs = ownOneDay ? filedHere.filter((r) => !notes.oneDayMove.includes(r.id)) : filedHere;
-    const oneDay = filedHere.filter((r) => notes.oneDayMove.includes(r.id));
+    const rs = ownOneDay ? filedHere.filter((r) => !ONE_DAY.includes(r.id)) : filedHere;
+    const oneDay = filedHere.filter((r) => ONE_DAY.includes(r.id));
     const others = CAUSES.filter((o) => o !== cause).map((o) => (issueNo(o) ? `${o} → #${issueNo(o)}` : `${o} → stays in #${split.ticket}, its own cause`)).join(' · ');
     const days = rs.map((r) => r.receivedAt).sort();
     const tenantList = [...new Set(rs.map((r) => r.tenant))].sort();
@@ -93,7 +96,7 @@ export function tickets() {
       '',
       `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
       ...(oneDay.length
-        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`); the desk files them here by tenant, but they are counted once, in #${issueNo('one-day-move')}, not here.`]
+        ? ['', `**Footnote:** ${oneDay.length} of these are one-day moves (the desk's notes, \`desk-notes.json\`, where the report's own text shows it); the desk files them here by tenant, but they are counted once, in #${issueNo('one-day-move')}, not here.`]
         : []),
       '',
       `Tenants (${tenantList.length}): ${tenantList.join(', ')} · first ${days[0].slice(0, 10)}, last ${days.at(-1)!.slice(0, 10)}.`,
@@ -111,7 +114,8 @@ export function tickets() {
 // the desk files them by tenant (causes.ts, readAs footnote), and are also this ticket's: the only overlap.
 function oneDayTicket() {
   const cause = 'one-day-move' as const;
-  const rs = merged.filter((r) => notes.oneDayMove.includes(r.id));
+  const rs = merged.filter((r) => ONE_DAY.includes(r.id));
+  const dropped = notes.oneDayMove.filter((id) => !ONE_DAY.includes(id));
   const filed = [...new Set(rs.map((r) => counted(r)))].map((c) => `${c} → #${issueNo(c!)}`).join(' · ');
   const body = [
     `reports: ${rs.length}`,
@@ -127,7 +131,9 @@ function oneDayTicket() {
     '',
     `**Counted once, here:** the desk files them under ${filed} by tenant (\`causes.ts\`); that ticket does not count them.`,
     '',
-    `${SEEN}: "${rs.length} reports read as a one-day move; filed under parser by tenant".`,
+    `${SEEN}: the \`one-day-move\` row.`,
+    '',
+    `**Which reports:** the ones the desk noted as a one-day move (\`desk-notes.json\`) whose own text shows one: two dates or two weekdays one day apart, or "one day off" (\`src/lib/kb/one-day.ts\`).${dropped.length ? ` Not ${dropped.join(', ')}: its text names no date and no day, so it stays with its cause.` : ''}`,
     '',
     `Why and how: kb page [#${split.ticket} split](${PAGE_SRC}), signed, desk ref **${DESK_REF}** · [as the desk sees it](${PAGE_OUT}).`,
     '',

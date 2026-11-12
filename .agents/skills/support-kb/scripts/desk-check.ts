@@ -13,7 +13,7 @@ import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { CAUSES } from '../../../../src/lib/kb/causes.ts';
-import { DESK_REF, tickets } from './issue-bodies.ts';
+import { DESK_REF, ONE_DAY, tickets } from './issue-bodies.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
 const REPO = 'wojciechbednarz/mega-s01e03-kb';
@@ -112,6 +112,21 @@ const unplaced = [...all].filter((id) => !unique.has(id));
 if (unplaced.length && !keptCauses.length)
   fail('R7 coverage', `${unplaced.length} reports of #${home.ticket} are in no ticket and no cause stays there: ${unplaced.slice(0, 10).join(', ')}${unplaced.length > 10 ? ', …' : ''}`);
 else ok(`coverage: ${unique.size} of ${all.size} reports in a ticket${unplaced.length ? `, ${unplaced.length} kept in #${home.ticket} by ${keptCauses.join(', ')}` : ''}`);
+
+// R9 · the one-day ticket on GitHub holds exactly the desk's one-day notes that the report's own text
+// supports (one-day.ts; claim 39: R-41236 names no date and no day).
+{
+  const od = want.find((t) => t.cause === 'one-day-move');
+  const gi = od && inRound.find((x) => String(x.number) === od.issue);
+  if (od && gi) {
+    const listed = new Set(gi.body.match(/R-\d+/g) ?? []);
+    const extra = [...listed].filter((id) => !ONE_DAY.includes(id));
+    const lacking = ONE_DAY.filter((id) => !listed.has(id));
+    if (extra.length || lacking.length)
+      fail('R9 one-day by text', `#${gi.number} lists ${[...listed].length}${extra.length ? `, not supported by their text: ${extra.join(', ')}` : ''}${lacking.length ? `, missing: ${lacking.join(', ')}` : ''}`);
+    else ok(`#${gi.number} holds the ${ONE_DAY.length} one-day moves the text supports`);
+  }
+}
 
 // R5 · the kb, as the desk sees it, names no cause without a ticket (claim 20's hint: "Which cause on
 // the kb has no ticket yet?"). Phrases are our model of "names a cause"; add one when a refusal teaches it.

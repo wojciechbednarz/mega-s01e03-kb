@@ -6,6 +6,7 @@
   import notes from '#lib/data/desk-notes.json';
   import split from '#lib/data/split-4471.json';
   import { uniqueById, causeOf, CAUSES, type Report, type Tenant } from '#lib/kb/causes';
+  import { oneDayMoves } from '#lib/kb/one-day';
 
   let { ticket, top = 2 }: { ticket: number; top?: number } = $props();
 
@@ -19,7 +20,7 @@
   };
   const rows = [
     ...CAUSES.map((c) => ({ problem: c, say: most(merged.filter((r) => causeOf(r, tenants.get(r.tenant)) === c)) })),
-    { problem: 'one-day-move', say: most(merged.filter((r) => notes.oneDayMove.includes(r.id))) },
+    { problem: 'one-day-move', say: most(merged.filter((r) => oneDayMoves(merged, notes.oneDayMove).includes(r.id))) },
   ];
   const ticketOf = (p: string) => (split.tickets as Record<string, { label: string; url: string }>)[p];
 </script>

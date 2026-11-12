@@ -72,6 +72,9 @@ table above shows it:
   (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday — a time-zone fault the
   parser fix does not stop. The desk files them under parser by tenant (`causes.ts`); they are counted once,
   in their own ticket, [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7), not in the parser ticket. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+  Each report's own text decides whether it is one of them (`one-day.ts`): two dates or two weekdays one day
+  apart, or "one day off". R-41236 ("The invite arrived before I made the booking.") names no date and no day,
+  so it stays a parser report.
 
 ## What users report most
 
