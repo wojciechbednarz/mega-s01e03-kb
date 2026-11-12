@@ -12,11 +12,11 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **Planned** — the #4471 page says "the fix is queued". The shared parser reads every date month first;
-day-first tenants get day and month swapped. The larger of #4471's two causes.
+day-first tenants get day and month swapped. The largest of #4471's three problems.
 
 **Ticket:** [issue #3](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3) holds the reports, the count and its
 status — read it there, this note does not copy them.
 
-Does **not** fix: the booking-v3 hint ([its task](/kb/tasks/fix-booking-v3-hint)). Whether it also clears the one-day moves the desk noted, which are parser reports too, is [a task](/kb/tasks/fix-time-zone-moves).
+Does **not** fix: the booking-v3 hint ([its task](/kb/tasks/fix-booking-v3-hint)). Nor the one-day moves the desk noted ([its task](/kb/tasks/fix-time-zone-moves)).
 
 <RenderStamp {signature} />

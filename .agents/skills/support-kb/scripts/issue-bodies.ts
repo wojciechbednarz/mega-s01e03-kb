@@ -7,7 +7,8 @@
 //   bun .agents/skills/support-kb/scripts/issue-bodies.ts     # dry run: print
 import { readdirSync, readFileSync } from 'node:fs';
 import { deskRef } from '../../../../src/lib/kb/desk-ref.ts';
-import { CAUSES, causeOf, uniqueById, type Cause, type Report, type Tenant } from '../../../../src/lib/kb/causes.ts';
+import { uniqueById, type Report, type Tenant } from '../../../../src/lib/kb/causes.ts';
+import { PROBLEMS, problemOf, type Problem } from '../../../../src/lib/kb/problems.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
 const data = (p: string) => JSON.parse(readFileSync(root + 'src/lib/data/' + p, 'utf8'));
@@ -31,7 +32,7 @@ export const DESK_REF = deskRef(SIGNATURE);
 const PAGE_SRC = `${REPO}/blob/main/src/routes/kb/incidents/4471-split/%2Bpage.svx`;
 const PAGE_OUT = `${REPO}/blob/main/rendered/kb/incidents/4471-split.html`;
 
-export const ABOUT: Record<Cause, { title: string; problem: string; fix: string }> = {
+export const ABOUT: Record<Problem, { title: string; problem: string; fix: string }> = {
   parser: {
     title: 'dates parse mm/dd in day-first locales',
     problem: 'The shared parser reads every date month first, so a day-first tenant’s dates come out with day and month swapped.',
@@ -42,18 +43,23 @@ export const ABOUT: Record<Cause, { title: string; problem: string; fix: string 
     problem: 'booking-v3’s form prints MM/DD/YYYY under its date field; people at day-first tenants type what it says, and the form reads the date day first, so it comes out swapped.',
     fix: 'The booking-v3 form’s date hint (or how the form reads it). Fixing the parser does not fix these.',
   },
+  'one-day-move': {
+    title: 'dates move by one day across time zones',
+    problem: 'The desk found these while working #4471 (desk-notes.json): the date is not swapped, it moves by one day — e.g. one client in Lisbon gets Tuesday, one in Toronto Monday. A time-zone or day-boundary fault.',
+    fix: 'Where a date crosses time zones (invites, reminders). Fixing the parser does not fix these.',
+  },
 };
 
-export const titleOf = (c: Cause, n: number) => `${ABOUT[c].title} · ${n} reports from #${split.ticket}`;
+export const titleOf = (c: Problem, n: number) => `${ABOUT[c].title} · ${n} reports from #${split.ticket}`;
 const issueNo = (c: string) => split.tickets[c]?.url.match(/issues\/(\d+)$/)?.[1];
 
 const merged = uniqueById(reports).filter((r) => r.mergedInto === split.ticket);
 
 export function tickets() {
-  return CAUSES.map((cause) => {
-    const rs = merged.filter((r) => causeOf(r, tenants.get(r.tenant)) === cause);
-    const oneDay = rs.filter((r) => notes.oneDayMove.includes(r.id));
-    const others = CAUSES.filter((o) => o !== cause).map((o) => `${o} → #${issueNo(o)}`).join(' · ');
+  return PROBLEMS.map((cause) => {
+    const rs = merged.filter((r) => problemOf(r, tenants.get(r.tenant), notes.oneDayMove) === cause);
+    const oneDay: Report[] = [];
+    const others = PROBLEMS.filter((o) => o !== cause).map((o) => `${o} → #${issueNo(o)}`).join(' · ');
     const days = rs.map((r) => r.receivedAt).sort();
     const tenantList = [...new Set(rs.map((r) => r.tenant))].sort();
     const body = [
@@ -70,7 +76,9 @@ export function tickets() {
       '',
       `**Not this ticket:** ${others}.`,
       '',
-      `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
+      cause === 'one-day-move'
+        ? `**How it is placed:** the desk's own notes (\`src/lib/data/desk-notes.json\`, \`oneDayMove\`), not the cause rule (\`src/lib/kb/problems.ts\`).`
+        : `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel); one-day moves the desk noted are #${issueNo('one-day-move')} (\`src/lib/kb/problems.ts\`).`,
       ...(oneDay.length
         ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`): ${oneDay.map((r) => r.id).join(', ')}. Counted here, where they're filed, as the desk counts them.`]
         : []),

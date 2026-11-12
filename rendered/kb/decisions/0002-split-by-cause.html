@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link href="../../_app/immutable/entry/start.B3iMDP7O.js" rel="modulepreload">
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link href="../../_app/immutable/entry/start.bAiyM4YG.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/DJmLkPEg.js" rel="modulepreload">
-		<link href="../../_app/immutable/chunks/DqJCOZoO.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/Cz2Ojui7.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/BvlHvZZV.js" rel="modulepreload">
-		<link href="../../_app/immutable/entry/app.CopWKyq0.js" rel="modulepreload">
+		<link href="../../_app/immutable/entry/app.CAOf04Tw.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/B8GPRu3j.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/CTXxr8Wp.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/Bayms3yu.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/BFLlyj_6.js" rel="modulepreload">
 		<link href="../../_app/immutable/nodes/0.CjLEVFkE.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/DGozhqCx.js" rel="modulepreload">
-		<link href="../../_app/immutable/nodes/4.ClVgmeKz.js" rel="modulepreload">
-		<link href="../../_app/immutable/chunks/MMiplKeq.js" rel="modulepreload">
+		<link href="../../_app/immutable/nodes/4.DjTCCwD-.js" rel="modulepreload">
+		<link href="../../_app/immutable/chunks/BTYDjFV6.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/CK9505kk.js" rel="modulepreload">
 		<link href="../../_app/immutable/chunks/Ck3kpHX4.js" rel="modulepreload">
 		<!--e2jw2j--><!----><title>0002 · Before a ticket is marked known, split it by cause · support kb</title>
@@ -22,20 +22,20 @@ merged ticket is marked <strong>known</strong>, read its reports for <strong>whi
 0001 stays accepted until this one is decided.</p> <h2>Context</h2> <p>0001 merges reports whose subject lines match, without reading the body. It accepted one cost: reports
 with <em>different</em> subjects about the same bug end up in separate tickets, merged later.</p> <p>#4471 showed the opposite cost, which 0001 does not name: reports with the <strong>same</strong> subject from <strong>different</strong> bugs end up in <strong>one</strong> ticket. “Invite came on the wrong day” was written about the parser
 bug and about the booking-v3 hint bug alike. The ticket was marked known with one fix queued, and one of
-its two causes had nobody working on it (<a href="/kb/incidents/4471-split">#4471 split</a>).</p> <h2>Decision (proposed)</h2> <ol><li>Intake keeps merging by subject — 0001’s reason, speed during an incident, still holds.</li> <li>Before a merged ticket’s status becomes <strong>known</strong>, its reports are placed by what their bodies say
+its problems had nobody working on it (<a href="/kb/incidents/4471-split">#4471 split</a>).</p> <h2>Decision (proposed)</h2> <ol><li>Intake keeps merging by subject — 0001’s reason, speed during an incident, still holds.</li> <li>Before a merged ticket’s status becomes <strong>known</strong>, its reports are placed by what their bodies say
 (<code>#lib/kb/symptoms</code>) and grouped by the fix that would stop them.</li> <li>One problem, one ticket; the incident page shows every problem with its ticket and its count.</li></ol> <h2>Consequences</h2> <ul><li>A big ticket costs one read of its bodies before it is marked known — minutes with <code>place()</code>, not a person’s morning.</li> <li>Two bugs can no longer hide in one known ticket.</li> <li>Reports that name no date are placed last, by inference, and labelled as such.</li> <li>If accepted, 0001 becomes <strong>amended</strong> (intake rule kept, “known” rule added); 0001’s text stays as written.</li></ul> <!--[0--><p class="stamp svelte-1280m42">desk ref <b class="svelte-1280m42">DR-8P0G-MWJY</b></p><!--]--><!----><!----></main> <footer class="svelte-e2jw2j">Pages are written by people. Tables and charts are built from data at render time.</footer></div><!--]--><!----><!--]--><!--]--> <!--[-1--><!--]--><!--]-->
 			
 			<script>
 				{
-					__sveltekit_1v997p2 = {
+					__sveltekit_1h9j70z = {
 						base: new URL("../..", location).pathname.slice(0, -1)
 					};
 
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("../../_app/immutable/entry/start.B3iMDP7O.js"),
-						import("../../_app/immutable/entry/app.CopWKyq0.js")
+						import("../../_app/immutable/entry/start.bAiyM4YG.js"),
+						import("../../_app/immutable/entry/app.CAOf04Tw.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 4],

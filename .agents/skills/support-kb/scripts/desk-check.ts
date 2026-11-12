@@ -12,7 +12,7 @@
 import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { CAUSES } from '../../../../src/lib/kb/causes.ts';
+import { PROBLEMS as CAUSES } from '../../../../src/lib/kb/problems.ts'; // causes.ts + the desk's notes
 import { DESK_REF, tickets } from './issue-bodies.ts';
 
 const root = new URL('../../../../', import.meta.url).pathname;
@@ -40,8 +40,8 @@ const issueOf = (c: string) => Number(home.tickets[c].url.match(/issues\/(\d+)$/
 // R1 · the home and the desk's code name the same causes
 const codeOnly = CAUSES.filter((c) => !homeCauses.includes(c));
 const homeOnly = homeCauses.filter((c) => !(CAUSES as readonly string[]).includes(c));
-if (codeOnly.length) fail('R1 home = code', `causes.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
-if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which causes.ts does not know`);
+if (codeOnly.length) fail('R1 home = code', `problems.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
+if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which problems.ts does not know`);
 if (!codeOnly.length && !homeOnly.length) ok(`home names the code's causes: ${homeCauses.join(', ')}`);
 
 // ── the round

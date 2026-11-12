@@ -1,11 +1,12 @@
 <script lang="ts">
-  // What a big ticket really holds, by the desk's own rule: every report's cause from causes.ts
-  // (tenant locale + booking form + channel). Reports the desk read differently (desk-notes.json)
-  // are counted where they're filed and footnoted, as the desk does. Counts are computed, never typed.
+  // What a big ticket really holds: every report's problem (problems.ts) — the desk's cause from causes.ts
+  // (tenant locale + booking form + channel), or the one-day move the desk noted (desk-notes.json).
+  // Counts are computed, never typed.
   import reports from '#lib/data/reports-4471.json';
   import notes from '#lib/data/desk-notes.json';
   import split from '#lib/data/split-4471.json';
-  import { uniqueById, causeOf, CAUSES, readAs, type Report, type Tenant } from '#lib/kb/causes';
+  import { uniqueById, type Report, type Tenant } from '#lib/kb/causes';
+  import { PROBLEMS, problemOf } from '#lib/kb/problems';
 
   let { ticket }: { ticket: number } = $props();
 
@@ -13,13 +14,12 @@
   const tenants = new Map(Object.values(tenantFiles).map((t) => [t.handle, t]));
 
   const merged = uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket);
-  const rows = CAUSES.map((cause) => {
-    const rs = merged.filter((r) => causeOf(r, tenants.get(r.tenant)) === cause);
+  const rows = PROBLEMS.map((cause) => {
+    const rs = merged.filter((r) => problemOf(r, tenants.get(r.tenant), notes.oneDayMove) === cause);
     const subjects = new Map<string, number>();
     for (const r of rs) subjects.set(r.subject, (subjects.get(r.subject) ?? 0) + 1);
     const say = [...subjects.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 2);
-    const g = { reports: rs } as Parameters<typeof readAs>[0];
-    return { cause, count: rs.length, say, oneDay: readAs(g, notes.oneDayMove) };
+    return { cause, count: rs.length, say };
   }).filter((row) => row.count > 0);
 
   const ticketOf = (c: string) => (split.tickets as Record<string, { label: string; url: string }>)[c];
@@ -27,11 +27,11 @@
 
 <p class="sum">
   <strong>{merged.length}</strong> reports merged into #{ticket} ·
-  <strong>{rows.length}</strong> {rows.length === 1 ? 'cause' : 'causes'}
+  <strong>{rows.length}</strong> {rows.length === 1 ? 'problem' : 'problems'}
 </p>
 
 <table>
-  <thead><tr><th>cause</th><th>ticket</th><th>reports</th><th>users say most</th></tr></thead>
+  <thead><tr><th>problem</th><th>ticket</th><th>reports</th><th>users say most</th></tr></thead>
   <tbody>
     {#each rows as row (row.cause)}
       <tr>
@@ -46,11 +46,6 @@
   </tbody>
 </table>
 
-{#each rows as row (row.cause)}
-  {#if row.oneDay}
-    <p class="note">{row.oneDay} of the <code>{row.cause}</code> reports the desk read as a one-day move (<code>desk-notes.json</code>); counted where they're filed, footnoted here.</p>
-  {/if}
-{/each}
 
 <style>
   .sum { margin: 1rem 0 0.5rem; }

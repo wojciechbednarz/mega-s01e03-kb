@@ -1,8 +1,8 @@
 ---
 layout: runbook
 type: Incident Split
-title: '#4471 split · two causes, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser 379 (#3), hint 33 (#1).'
+title: '#4471 split · three problems, not one'
+description: 'Support ticket #4471 merged 412 date reports as one; they are three problems, each with its own issue: parser 374 (#3), hint 33 (#1), one-day moves 5 (#2).'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -34,9 +34,10 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   import RenderStamp from '#lib/kb/RenderStamp.svelte';
 </script>
 
-**#4471 holds two causes, not one.** Every report in it is about a wrong date, so they were merged as one
-issue — but by the desk's own rule (`causes.ts`) they come from two causes that need two fixes, so each
-cause has a ticket of its own: **parser** and **hint**.
+**#4471 holds three problems, not one.** Every report in it is about a wrong date, so they were merged as
+one issue — but they need three fixes, so each problem has a ticket of its own: **parser** and **hint**, the
+two causes in the desk's rule (`causes.ts`), and the **one-day moves** the desk itself found while working
+the ticket (`desk-notes.json`).
 
 <Callout>
 
@@ -55,11 +56,12 @@ subject, different cause is normal here.
 - **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
   booking-v3 day-first tenant. Fixing the parser does not fix these.
-- **The desk's one-day notes** — the desk read a few reports as a date moving by one day
-  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: counted in the parser
-  ticket and footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+- **one-day-move** — the desk noted a few reports where the date moves by **one day**, not swapped
+  (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday. That is a time-zone fault;
+  fixing the parser does not fix it. `causes.ts` would file them under parser by tenant; they are counted
+  here instead, once (`problems.ts`). Its work: [a task](/kb/tasks/fix-time-zone-moves).
 
-## Why one ticket held two causes
+## Why one ticket held three problems
 
 - [Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose **subject lines** match, without
   reading anything else; the [triage page](/kb/triage/dedupe) says "when unsure, merge". Both causes share

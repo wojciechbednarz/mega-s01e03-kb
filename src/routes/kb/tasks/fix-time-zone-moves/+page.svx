@@ -1,6 +1,6 @@
 ---
 layout: runbook
-title: 'Look into the one-day moves the desk noted'
+title: 'Fix the one-day moves across time zones'
 owner: support desk
 status: planned
 reviewed: 2026-11-11
@@ -12,9 +12,9 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **Planned.** The desk read a few reports as a date moving by **one day**, not swapped
-(`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports, counted and footnoted in
-the [parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3).
+(`desk-notes.json`) — a time-zone or day-boundary fault, which the parser fix does not stop. Its ticket:
+[one-day moves](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/2), which holds the reports and the count.
 
-Done when someone confirms the parser fix clears them too. What they find goes on the parser ticket.
+Done when dates keep their day across time zones (invites, reminders).
 
 <RenderStamp {signature} />
