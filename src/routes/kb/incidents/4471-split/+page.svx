@@ -1,10 +1,30 @@
 ---
 layout: runbook
+type: Incident Split
 title: '#4471 split · two causes, not one'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser 379 (#3), hint 33 (#1).'
+tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
 reviewed: 2026-11-11
-source: 'src/lib/data/reports-4471.json (export 2026-10-04), src/lib/data/desk-notes.json, src/lib/kb/causes.ts'
+sources:
+  - id: reports
+    resource: src/lib/data/reports-4471.json
+    title: ticket-system export of #4471 (427 rows, 412 unique)
+    last_modified: 2026-10-04
+  - id: tenants
+    resource: src/lib/data/tenants/
+    title: locale and booking form per tenant
+  - id: notes
+    resource: src/lib/data/desk-notes.json
+    title: reports the desk read as a one-day move
+  - id: rule
+    resource: src/lib/kb/causes.ts
+    title: the desk's cause rule (causeOf)
+  - id: tickets
+    resource: src/lib/data/split-4471.json
+    title: the one home for the causes and their tickets (cause → GitHub issue)
+generated: { by: 'agent:claude-code', at: 2026-11-11 }
 signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzODk0NDUsImV4cCI6MTc5NDQ3NTg0NX0.RPVyvfLDTZJb105uMnj-xogZLCvExOb3vdVuPIQmeAY'
 ---
 
