@@ -102,7 +102,7 @@ if (unique.size === placed.length && !outside.length) ok(`split out of #${home.t
 // R5 · the kb, as the desk sees it, names no cause without a ticket (claim 20's hint: "Which cause on
 // the kb has no ticket yet?"). Phrases are our model of "names a cause"; add one when a refusal teaches it.
 const UNTICKETED = [
-  /not a ticket yet/i, /no ticket (yet|of its own)/i, /cause of (its|their) own/i, /its own ticket/i,
+  /not a ticket yet/i, /no ticket (yet|of its own)/i, /cause of (its|their) own/i, /gets its own ticket/i,
   /\bno cause\b/i, /\bunplaced\b/i, /has no ticket/i,
 ];
 const text = (f: string) =>
