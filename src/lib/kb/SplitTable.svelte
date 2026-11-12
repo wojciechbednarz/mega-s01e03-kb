@@ -48,7 +48,7 @@
 
 {#each rows as row (row.cause)}
   {#if row.oneDay}
-    <p class="note">{row.oneDay} of the <code>{row.cause}</code> reports the desk read as a one-day move (<code>desk-notes.json</code>); counted where they're filed, footnoted here.</p>
+    <p class="note">{row.oneDay} of the <code>{row.cause}</code> reports the desk read as a one-day move (<code>desk-notes.json</code>); counted where they're filed, footnoted here{#if ticketOf('one-day-move')}; the problem itself: <a href={ticketOf('one-day-move').url}>{ticketOf('one-day-move').label}</a>{/if}.</p>
   {/if}
 {/each}
 

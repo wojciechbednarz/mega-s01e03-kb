@@ -40,7 +40,8 @@ const issueOf = (c: string) => Number(home.tickets[c].url.match(/issues\/(\d+)$/
 
 // R1 · the home and the desk's code name the same causes
 const codeOnly = CAUSES.filter((c) => !homeCauses.includes(c));
-const homeOnly = homeCauses.filter((c) => !(CAUSES as readonly string[]).includes(c));
+// a problem the desk noted itself (desk-notes.json) may have a ticket though causes.ts does not name it
+const homeOnly = homeCauses.filter((c) => !(CAUSES as readonly string[]).includes(c) && !(home.tickets[c] as any).deskNoted);
 if (codeOnly.length) fail('R1 home = code', `causes.ts has ${codeOnly.join(', ')} with no ticket in split-4471.json`);
 if (homeOnly.length) fail('R1 home = code', `split-4471.json has ${homeOnly.join(', ')}, which causes.ts does not know`);
 if (!codeOnly.length && !homeOnly.length) ok(`home names the code's causes: ${homeCauses.join(', ')}`);
@@ -90,7 +91,8 @@ for (const c of issueCauses) {
   if (i && i.state !== 'OPEN') fail('R6 tickets open', `cause ${c}: #${i.number} is ${i.state.toLowerCase()} (${i.stateReason || 'no reason'})`);
 }
 // R4 · the tickets split the big ticket exactly: every report once
-const placed = want.flatMap((t) => t.ids);
+// the one allowed overlap: desk-noted reports, also counted under the cause they're filed in
+const placed = want.filter((t: any) => !t.alsoCounted).flatMap((t) => t.ids);
 const unique = new Set(placed);
 const merged = JSON.parse(readFileSync(join(root, 'src/lib/data/reports-4471.json'), 'utf8')) as { id: string; mergedInto: number | null }[];
 const all = new Set(merged.filter((r) => r.mergedInto === home.ticket).map((r) => r.id));

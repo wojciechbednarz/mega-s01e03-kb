@@ -58,8 +58,9 @@ else ok('export data, causes.ts and decision 0001 unchanged since the export');
 
 // 3. Tickets on GitHub == tickets the data generates
 const want = tickets();
-const total = want.reduce((n, t) => n + t.count, 0);
-const ids = new Set(want.flatMap((t) => t.ids));
+const once = want.filter((t: any) => !t.alsoCounted); // desk-noted tickets overlap by design
+const total = once.reduce((n, t) => n + t.count, 0);
+const ids = new Set(once.flatMap((t) => t.ids));
 if (ids.size !== total) errors.push(`a report is in more than one ticket (${total} placements, ${ids.size} reports)`);
 const issues = JSON.parse(sh('gh', ['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '100', '--json', 'number,title,body,state,stateReason,labels,createdAt']));
 const split = JSON.parse(readFileSync(join(root, 'src/lib/data/split-4471.json'), 'utf8'));

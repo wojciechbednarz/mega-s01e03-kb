@@ -8,6 +8,11 @@
     "hint": {
       "label": "issue #5",
       "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5"
+    },
+    "one-day-move": {
+      "label": "issue #7",
+      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7",
+      "deskNoted": true
     }
   }
 }

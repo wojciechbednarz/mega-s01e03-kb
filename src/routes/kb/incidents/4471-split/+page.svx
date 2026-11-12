@@ -2,7 +2,7 @@
 layout: runbook
 type: Incident Split
 title: '#4471 split · two causes, not one'
-description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser 379 (#6), hint 33 (#5).'
+description: 'Support ticket #4471 merged 412 date reports as one; by the desk''s cause rule they are two causes, each with its own issue: parser 379 (#6), hint 33 (#5); the one-day moves the desk noted (5, also in parser) have #7.'
 tags: [incident, ticket-4471, dates, split-by-cause]
 owner: support desk
 status: split
@@ -57,8 +57,10 @@ subject, different cause is normal here.
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
   booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 - **The desk's one-day notes** — the desk read a few reports as a date moving by one day
-  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: counted in the parser
-  ticket and footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+  (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday — a time-zone fault the
+  parser fix does not stop. By the desk's rule (`causes.ts`) they stay counted in the parser ticket, where
+  they're filed, and the problem the desk found has its own ticket too:
+  [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
 ## Why one ticket held two causes
 
