@@ -55,9 +55,9 @@ subject, different cause is normal here.
 - **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
   booking-v3 day-first tenant. Fixing the parser does not fix these.
-- **The desk's one-day notes** — the desk read a few parser reports as a date moving by one day
-  (`desk-notes.json`). As the desk does, they are counted where they're filed and footnoted above; whether
-  they are a cause of their own is [a task](/kb/tasks/fix-time-zone-moves), not a ticket yet.
+- **The desk's one-day notes** — the desk read a few reports as a date moving by one day
+  (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: counted in the parser
+  ticket and footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
 ## Why one ticket held two causes
 

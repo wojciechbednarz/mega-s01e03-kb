@@ -12,10 +12,9 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 </script>
 
 **Planned.** The desk read a few reports as a date moving by **one day**, not swapped
-(`desk-notes.json`) — possibly time zones or daylight saving. By the desk's rule they are counted under
-their cause, **parser**, and footnoted ([parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3)).
+(`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports, counted and footnoted in
+the [parser ticket](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/3).
 
-Done when someone confirms whether the one-day moves have a cause of their own; if they do, it gets
-its own ticket then, not before.
+Done when someone confirms the parser fix clears them too. What they find goes on the parser ticket.
 
 <RenderStamp {signature} />
