@@ -24,7 +24,7 @@ Split: two causes. #4471 is the parser's; the hint reports have their own ticket
 
 **Update 2026-11-12:** by the desk's own cause rule, #4471 holds two causes, not one. Its own cause is
 the parser; 33 hint reports were merged in by mistake and now have
-[issue #4](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/4) — see [#4471 split](/kb/incidents/4471-split).
+[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5) — see [#4471 split](/kb/incidents/4471-split).
 
 ## What was merged
 

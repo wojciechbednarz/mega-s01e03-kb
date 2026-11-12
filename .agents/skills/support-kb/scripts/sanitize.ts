@@ -76,9 +76,9 @@ for (const t of want) {
   if (have !== [...t.labels].sort().join(',')) errors.push(`#${t.issue} labels ${have} ≠ ${t.labels.join(',')}`);
 }
 const linked = new Set(want.map((t) => t.issue));
-// only this round's issues count (the round = the page signature's iat)
-const iat = JSON.parse(Buffer.from(([...sigs][0] ?? '').split('.')[1] ?? '', 'base64url').toString() || '{}').iat ?? 0;
-for (const i of issues.filter((x: any) => new Date(x.createdAt) >= new Date(iat * 1000))) {
+// only this round's issues count (the round = the page's "Start over", round-start.txt; see desk-check.ts)
+const roundStart = new Date((existsSync(join(root, '.agents/skills/support-kb/round-start.txt')) ? readFileSync(join(root, '.agents/skills/support-kb/round-start.txt'), 'utf8').trim() : '') || 0);
+for (const i of issues.filter((x: any) => new Date(x.createdAt) >= roundStart)) {
   const split = i.labels.some((l: any) => l.name.startsWith('split-from-'));
   if (i.state === 'OPEN' && split && !linked.has(String(i.number))) errors.push(`#${i.number} is open and split-labelled but no cause maps to it`);
 }

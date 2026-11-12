@@ -48,8 +48,13 @@ if (!codeOnly.length && !homeOnly.length) ok(`home names the code's causes: ${ho
 // ── the round
 const page = readFileSync(join(root, 'src/routes/kb/incidents/4471-split/+page.svx'), 'utf8');
 const sig = page.match(/^signature:\s*'?([^'\n]+)'?$/m)?.[1] ?? '';
-const claims = JSON.parse(Buffer.from(sig.split('.')[1] ?? '', 'base64url').toString() || '{}');
-const roundStart = new Date((claims.iat ?? 0) * 1000);
+// The round starts when the run is started over on the Challenge page, NOT when start-challenge hands out a
+// ticket: a repeat start-challenge re-issues the ticket inside the same round (claim 24, 2026-11-12: a new
+// ticket, and the desk still read #1-#3). Record the "Start over" time in round-start.txt (ISO, UTC).
+const roundFile = join(root, '.agents/skills/support-kb/round-start.txt');
+let roundStart: Date;
+try { roundStart = new Date(readFileSync(roundFile, 'utf8').trim()); } catch { roundStart = new Date(NaN); }
+if (isNaN(roundStart.getTime())) { fail('R0 round', 'round-start.txt missing or not a date: write the time of the page\'s "Start over"'); roundStart = new Date(0); }
 
 // ── tickets on GitHub created in this round
 const issues = gh(['issue', 'list', '-R', REPO, '--state', 'all', '--limit', '200', '--json', 'number,title,body,state,stateReason,createdAt']) as {

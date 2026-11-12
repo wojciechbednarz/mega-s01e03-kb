@@ -25,7 +25,7 @@ sources:
     resource: src/lib/data/split-4471.json
     title: the one home for the causes and their tickets (cause → GitHub issue)
 generated: { by: 'agent:claude-code', at: 2026-11-12 }
-signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTgyNTcsImV4cCI6MTc5NDU4NDY1N30.D8SG5laKj_hCGyW3poObe5dtz0GpPA82Iz9FRiDoqeA'
+signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTg1NzcsImV4cCI6MTc5NDU4NDk3N30.-OxYbrO9gb-DTJzJqbV09VurDpNcYselSoRxbwUeTMs'
 ---
 
 <script>
@@ -38,7 +38,7 @@ signature: 'v1.eyJzdWIiOiIyMTM2IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
 issue. By the desk's own rule (`causes.ts`) a ticket is the cause most of its reports share, and the rest
 were merged into the wrong place: #4471 is the **parser** ticket, and the **hint** reports were merged into
 it by mistake. They need a different fix, so they now have a ticket of their own,
-[issue #4](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/4).
+[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 
 <Callout>
 
@@ -56,7 +56,7 @@ subject, different cause is normal here.
   swapped. This is what the [#4471 page](/kb/incidents/4471) describes, and #4471 stays its ticket. One fix: read dates in the tenant's order.
 - **hint** — booking-v3's form prints `MM/DD/YYYY` under its date field; people at day-first tenants type
   what it says, and the form reads it the tenant's way. Only reports that came **through the form** from a
-  booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #4](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/4).
+  booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 - **The desk's one-day notes** — the desk read a few reports as a date moving by one day
   (`desk-notes.json`). By the desk's rule (`causes.ts`) they are **parser** reports: they stay in #4471,
   footnoted there. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
