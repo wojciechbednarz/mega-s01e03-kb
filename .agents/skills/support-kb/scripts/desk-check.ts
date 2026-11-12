@@ -111,7 +111,14 @@ const text = (f: string) =>
   readFileSync(f, 'utf8').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')
     .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ');
 let hits = 0;
-for (const f of walk(join(root, 'rendered')).filter((f) => f.endsWith('.html'))) {
+// The desk's own pages, as exported, are its view: they are not ours to reword (claim 27: "The desk counts
+// with its own view, as it was exported."), so R5 reads only the pages we added or changed.
+const asExported = (f: string) => {
+  const src = f.replace(join(root, 'rendered'), 'src/routes').replace(/\.html$/, '/+page.svx').replace('src/routes/kb/+page.svx', 'src/routes/kb/+page.svx');
+  const r = spawnSync('git', ['diff', '--quiet', '91120d4', '--', src.replace('src/routes/kb.html', 'src/routes/kb/+page.svx')], { cwd: root });
+  return r.status === 0 && spawnSync('git', ['cat-file', '-e', `91120d4:${src}`], { cwd: root }).status === 0;
+};
+for (const f of walk(join(root, 'rendered')).filter((f) => f.endsWith('.html') && !asExported(f))) {
   const t = text(f);
   for (const re of UNTICKETED) {
     const m = t.match(re);

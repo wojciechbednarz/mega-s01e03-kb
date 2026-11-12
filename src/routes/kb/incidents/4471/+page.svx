@@ -2,12 +2,12 @@
 layout: runbook
 title: '#4471 · dates parse mm/dd in eu locales'
 owner: support desk
-status: split
-reviewed: 2026-11-12
+status: known
+reviewed: 2026-09-30
 ---
 
 <script>
-  import SplitTable from '#lib/kb/SplitTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
   import QueueTimeline from '#lib/kb/QueueTimeline.svelte';
   import Callout from '#lib/kb/Callout.svelte';
 </script>
@@ -19,16 +19,12 @@ Since April, people have told us their bookings land on the wrong day: a month f
 first. The fix is queued.
 
 <Callout>
-Split: two causes, one ticket each.
+Known. One issue, one fix queued.
 </Callout>
-
-**Update 2026-11-12:** by the desk's own cause rule, #4471 holds two causes, not one. Each has its own
-ticket: parser [issue #6](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6), hint
-[issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5) — see [#4471 split](/kb/incidents/4471-split).
 
 ## What was merged
 
-<SplitTable ticket={4471} />
+<CauseTable ticket={4471} />
 
 ## Since April
 
