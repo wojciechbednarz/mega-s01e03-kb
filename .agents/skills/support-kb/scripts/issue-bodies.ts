@@ -93,7 +93,7 @@ export function tickets() {
       '',
       `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
       ...(oneDay.length
-        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`): ${oneDay.map((r) => r.id).join(', ')}. Counted here, where the desk files them; the problem itself is #${issueNo('one-day-move')}.`]
+        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`); counted here, where the desk files them; the problem itself is #${issueNo('one-day-move')}. (Their ids are listed once, below — claim 37: a body names each report once.)`]
         : []),
       '',
       `Tenants (${tenantList.length}): ${tenantList.join(', ')} · first ${days[0].slice(0, 10)}, last ${days.at(-1)!.slice(0, 10)}.`,
