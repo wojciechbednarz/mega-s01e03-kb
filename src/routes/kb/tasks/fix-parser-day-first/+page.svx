@@ -17,6 +17,6 @@ day-first tenants get day and month swapped. The larger of #4471's two causes.
 **Ticket:** [issue #6](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6) holds the reports, the count and its
 status — read it there, this note does not copy them.
 
-Does **not** fix: the booking-v3 hint ([its task](/kb/tasks/fix-booking-v3-hint)). Whether it also clears the one-day moves the desk noted, which are parser reports too, is [a task](/kb/tasks/fix-time-zone-moves).
+Does **not** fix: the booking-v3 hint ([its task](/kb/tasks/fix-booking-v3-hint)). Nor the one-day moves the desk noted, which have their own ticket ([their task](/kb/tasks/fix-time-zone-moves)).
 
 <RenderStamp {signature} />
