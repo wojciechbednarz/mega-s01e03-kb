@@ -42,5 +42,21 @@ page signature), `cause` and its count; the tickets split the big ticket exactly
 cause without a ticket. **The causes have one home:** `split-4471.json`. Pages and tickets read it; no page
 names a cause it does not hold. A refusal that `desk-check` did not predict is a new rule for it.
 
+desk-check also has R7 (coverage: no report of the big ticket left in no ticket unless the home keeps a
+cause there) and R8 (numbers a reader sees on our pages, such as "N causes" or a count next to `issue #N`,
+agree with the tickets). R8 only warns (`!`); promote a line to a failure when a refusal teaches it.
+
+## Before a claim: the blind check (paid, by hand)
+
+`python3 -I .agents/skills/support-kb/scripts/blind-check.py <out-dir> --dry-run` first, then without
+`--dry-run`. An independent model gets only each ticket's **Problem:** line, the tenants and the raw reports,
+then places every report. A stronger model re-reads only the disagreements. It is the one check that tests
+the split itself. Every other check tests the split against `causes.ts`. It is not a gate: read every
+remaining disagreement yourself and log what you decided.
+
+**Paid calls, for every agent working here:** models only through `omp`. Never call a provider API directly
+or read a key out of omp. Any single call estimated over $0.05 stops and asks the person (`--approved`
+only after a yes). Why: the key's daily limit is small, and the person decides what is worth paying for.
+
 `scripts/desk-watch.sh <out-dir> [seconds] [rounds]` re-runs `desk-snapshot.sh` and logs every change with
 the real time; run it in the background for a whole work session, with `<out-dir>` outside this repo.

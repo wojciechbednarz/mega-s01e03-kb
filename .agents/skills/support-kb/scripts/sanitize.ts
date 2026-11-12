@@ -89,6 +89,7 @@ ok(`${want.length} tickets compared with GitHub · ${total} reports placed`);
 {
   const r = spawnSync('bun', [join(root, '.agents/skills/support-kb/scripts/desk-check.ts')], { cwd: root, encoding: 'utf8' });
   for (const l of r.stdout.split('\n').filter((l) => l.includes('✗'))) errors.push('desk-check ' + l.trim().replace(/^✗ /, ''));
+  for (const l of r.stdout.split('\n').filter((l) => l.trim().startsWith('! '))) warns.push('desk-check ' + l.trim().replace(/^! /, ''));
   if (r.status === 0) ok('desk-check clean');
 }
 

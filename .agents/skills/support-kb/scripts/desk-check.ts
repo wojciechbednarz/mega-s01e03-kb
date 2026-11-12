@@ -20,6 +20,8 @@ const REPO = 'wojciechbednarz/mega-s01e03-kb';
 const errors: string[] = [];
 const ok = (m: string) => console.log('  ✓ ' + m);
 const fail = (rule: string, m: string) => errors.push(`[${rule}] ${m}`);
+const warns: string[] = [];
+const warn = (rule: string, m: string) => warns.push(`[${rule}] ${m}`); // printed with "!", never fails the gate
 
 const walk = (d: string): string[] =>
   readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
@@ -102,15 +104,31 @@ const outside = [...unique].filter((id) => !all.has(id));
 if (outside.length) fail('R4 exact split', `${outside.length} ticketed reports are not in #${home.ticket}`);
 if (unique.size === placed.length && !outside.length) ok(`split out of #${home.ticket}: ${want.map((t) => `${t.cause} ${t.count}`).join(' + ')}; ${all.size - unique.size} stay in #${home.ticket} (its own cause: ${homeCauses.filter((c) => !issueCauses.includes(c)).join(', ')})`);
 
+// R7 · coverage: every report of the big ticket is in some ticket. Reports may stay in the big ticket only
+// when the home keeps a cause there (a cause in split-4471.json with no issue URL). R4 checks no overlap
+// and nothing from outside; this checks nothing is left behind by accident.
+const keptCauses = homeCauses.filter((c) => !issueCauses.includes(c));
+const unplaced = [...all].filter((id) => !unique.has(id));
+if (unplaced.length && !keptCauses.length)
+  fail('R7 coverage', `${unplaced.length} reports of #${home.ticket} are in no ticket and no cause stays there: ${unplaced.slice(0, 10).join(', ')}${unplaced.length > 10 ? ', …' : ''}`);
+else ok(`coverage: ${unique.size} of ${all.size} reports in a ticket${unplaced.length ? `, ${unplaced.length} kept in #${home.ticket} by ${keptCauses.join(', ')}` : ''}`);
+
 // R5 · the kb, as the desk sees it, names no cause without a ticket (claim 20's hint: "Which cause on
 // the kb has no ticket yet?"). Phrases are our model of "names a cause"; add one when a refusal teaches it.
 const UNTICKETED = [
   /not a ticket yet/i, /no ticket (yet|of its own)/i, /cause of (its|their) own/i, /gets its own ticket/i,
   /\bno cause\b/i, /\bunplaced\b/i, /has no ticket/i,
 ];
+// Text as a reader sees it: scripts, styles and tags out first, then CauseTable's own fixed words (the
+// desk's view) removed. (Until 2026-11-12 a `//` comment sat inside this chain and swallowed the script,
+// style and tag stripping, so R5 matched raw HTML.)
 const text = (f: string) =>
-  readFileSync(f, 'utf8').replace(/not this ticket — no ticket of its own/g, '') // CauseTable's own fixed words (the desk's view).replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '').replace(/<[^>]+>/g, ' ')
-    .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s+/g, ' ');
+  readFileSync(f, 'utf8')
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z#0-9]+;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/not this ticket — no ticket of its own/g, '');
 let hits = 0;
 // The desk's own pages, as exported, are its view: they are not ours to reword (claim 27: "The desk counts
 // with its own view, as it was exported."), so R5 reads only the pages we added or changed.
@@ -131,6 +149,27 @@ for (const f of walk(join(root, 'rendered')).filter((f) => f.endsWith('.html') &
 }
 if (!hits) ok('rendered kb names no cause without a ticket');
 
+// R8 · numbers a reader sees on our pages agree with the tickets. WARNING only (does not fail the gate):
+// whether "2 causes" plus a desk-noted problem reads as 3 problems is a judgment, not yet a refusal fact.
+// Promote a line to fail() when a refusal teaches it.
+const WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5 };
+let r8 = 0;
+for (const f of walk(join(root, 'rendered')).filter((f) => f.endsWith('.html') && !asExported(f))) {
+  const t = text(f), rel = f.replace(root, '');
+  for (const m of t.matchAll(/\b(one|two|three|four|five|\d+) (causes|problems)\b/gi)) {
+    const n = WORDS[m[1].toLowerCase()] ?? Number(m[1]);
+    if (n !== want.length) { r8++; warn('R8 reader numbers', `${rel}: says "${m[0]}" but ${want.length} tickets split #${home.ticket}`); }
+  }
+  for (const tk of want) {
+    // the first number after "issue #N"; "×45" is a symptom tally (ReportedMost), not a count
+    const near = new RegExp(`issue #${tk.issue}\\b[^#\\d×]{0,60}(×?)(\\d+)\\b`, 'g');
+    for (const m of t.matchAll(near))
+      if (!m[1] && Number(m[2]) !== tk.count && !/^20\d\d$/.test(m[2])) { r8++; warn('R8 reader numbers', `${rel}: "${m[0].trim()}" shows ${m[2]} next to #${tk.issue}, its ticket says ${tk.count}`); }
+  }
+}
+if (!r8) ok('numbers on our pages agree with the tickets');
+
+for (const w of warns) console.log('  ! ' + w);
 for (const e of errors) console.log('  ✗ ' + e);
 console.log(errors.length ? `\ndesk-check: ${errors.length} error(s)` : '\ndesk-check: clean');
 process.exit(errors.length ? 1 : 0);
