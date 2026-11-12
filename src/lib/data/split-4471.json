@@ -6,8 +6,10 @@
       "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/6"
     },
     "hint": {
-      "label": "issue #5",
-      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5"
+      "label": "issue #5 (closed, not planned)",
+      "url": "https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5",
+      "state": "CLOSED",
+      "stateReason": "NOT_PLANNED"
     },
     "one-day-move": {
       "label": "issue #7",

@@ -88,7 +88,8 @@ for (const t of want) {
 // "no ticket of its own" for hint, and a closed ticket may count as none)
 for (const c of issueCauses) {
   const i = inRound.find((x) => x.number === issueOf(c));
-  if (i && i.state !== 'OPEN') fail('R6 tickets open', `cause ${c}: #${i.number} is ${i.state.toLowerCase()} (${i.stateReason || 'no reason'})`);
+  const wantState = (home.tickets[c] as any).state ?? 'OPEN'; // claim 36: the hint ends closed as not planned (MEGA support, by: human)
+  if (i && i.state !== wantState) fail('R6 ticket state', `cause ${c}: #${i.number} is ${i.state.toLowerCase()} (${i.stateReason || 'no reason'})`);
 }
 // R4 · the tickets split the big ticket exactly: every report once
 // the one allowed overlap: desk-noted reports, also counted under the cause they're filed in
