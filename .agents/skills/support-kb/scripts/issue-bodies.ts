@@ -14,7 +14,9 @@ const data = (p: string) => JSON.parse(readFileSync(root + 'src/lib/data/' + p, 
 
 const reports = data('reports-4471.json') as Report[];
 const notes = data('desk-notes.json') as { oneDayMove: string[] };
-const split = data('split-4471.json') as { ticket: number; tickets: Record<string, { label: string; url: string }> };
+const split = data('split-4471.json') as { ticket: number; countBy?: string; tickets: Record<string, { label: string; url: string }> };
+// How the desk counts (claim 27: "The desk counts with its own view, as it was exported."): by its own intake tag.
+const counted = (r: Report) => (split.countBy === 'intakeTag' ? r.meta.intakeTag : causeOf(r, tenants.get(r.tenant)));
 const tenants = new Map<string, Tenant>(
   readdirSync(root + 'src/lib/data/tenants').map((f) => {
     const t = data('tenants/' + f) as Tenant;
@@ -58,7 +60,7 @@ export function tickets() {
   // A ticket is the cause most of its reports share (causes.ts ticketCause): the big ticket keeps its own
   // cause; only causes merged into it by mistake get a GitHub issue (those with an issue URL in the home).
   return CAUSES.filter((c) => issueNo(c)).map((cause): any => {
-    const rs = merged.filter((r) => causeOf(r, tenants.get(r.tenant)) === cause);
+    const rs = merged.filter((r) => counted(r) === cause);
     const oneDay = rs.filter((r) => notes.oneDayMove.includes(r.id));
     const others = CAUSES.filter((o) => o !== cause).map((o) => (issueNo(o) ? `${o} → #${issueNo(o)}` : `${o} → stays in #${split.ticket}, its own cause`)).join(' · ');
     const days = rs.map((r) => r.receivedAt).sort();
@@ -98,7 +100,7 @@ export function tickets() {
 function oneDayTicket() {
   const cause = 'one-day-move' as const;
   const rs = merged.filter((r) => notes.oneDayMove.includes(r.id));
-  const filed = [...new Set(rs.map((r) => causeOf(r, tenants.get(r.tenant))))].map((c) => `${c} → #${issueNo(c!)}`).join(' · ');
+  const filed = [...new Set(rs.map((r) => counted(r)))].map((c) => `${c} → #${issueNo(c!)}`).join(' · ');
   const body = [
     `desk-ticket: ${split.ticket}`,
     `cause: ${cause}`,

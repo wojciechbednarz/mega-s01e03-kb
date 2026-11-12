@@ -14,7 +14,8 @@
 
   const merged = uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket);
   const rows = CAUSES.map((cause) => {
-    const rs = merged.filter((r) => causeOf(r, tenants.get(r.tenant)) === cause);
+    // counted the way the desk counts: by its own intake tag when split-4471.json says so
+    const rs = merged.filter((r) => ((split as { countBy?: string }).countBy === 'intakeTag' ? r.meta.intakeTag : causeOf(r, tenants.get(r.tenant))) === cause);
     const subjects = new Map<string, number>();
     for (const r of rs) subjects.set(r.subject, (subjects.get(r.subject) ?? 0) + 1);
     const say = [...subjects.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 2);
