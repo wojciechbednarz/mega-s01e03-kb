@@ -70,8 +70,8 @@ table above shows it:
   booking-v3 day-first tenant. Fixing the parser does not fix these. Their ticket: [issue #5](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/5).
 - **The desk's one-day notes** — the desk read a few reports as a date moving by one day
   (`desk-notes.json`): one client in Lisbon gets Tuesday, one in Toronto Monday — a time-zone fault the
-  parser fix does not stop. The desk files them under parser by tenant (`causes.ts`), so they are in the
-  parser count too; the problem itself has its own ticket, [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7). [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
+  parser fix does not stop. The desk files them under parser by tenant (`causes.ts`); they are counted once,
+  in their own ticket, [issue #7](https://github.com/wojciechbednarz/mega-s01e03-kb/issues/7), not in the parser ticket. [A task](/kb/tasks/fix-time-zone-moves) checks that the parser fix clears them too.
 
 ## What users report most
 

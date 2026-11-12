@@ -69,8 +69,8 @@ export function tickets() {
     // #7's, so they leave the cause they are filed under (causes.ts would put them in parser).
     const ownOneDay = Boolean(issueNo('one-day-move'));
     const filedHere = merged.filter((r) => counted(r) === cause);
-    const rs = filedHere; // the count a reader sees: the cause's row (claim 34; claim 33's 374 disagreed with the page)
-    void ownOneDay;
+    // claim 38: every report in exactly one ticket — the desk-noted one-day reports are #7's only
+    const rs = ownOneDay ? filedHere.filter((r) => !notes.oneDayMove.includes(r.id)) : filedHere;
     const oneDay = filedHere.filter((r) => notes.oneDayMove.includes(r.id));
     const others = CAUSES.filter((o) => o !== cause).map((o) => (issueNo(o) ? `${o} → #${issueNo(o)}` : `${o} → stays in #${split.ticket}, its own cause`)).join(' · ');
     const days = rs.map((r) => r.receivedAt).sort();
@@ -93,7 +93,7 @@ export function tickets() {
       '',
       `**Cause rule:** the desk's own (\`src/lib/kb/causes.ts\`: tenant locale + booking form + channel).`,
       ...(oneDay.length
-        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`); counted here, where the desk files them; the problem itself is #${issueNo('one-day-move')}. (Their ids are listed once, below — claim 37: a body names each report once.)`]
+        ? ['', `**Footnote:** ${oneDay.length} of these the desk read as a one-day move (\`desk-notes.json\`); the desk files them here by tenant, but they are counted once, in #${issueNo('one-day-move')}, not here.`]
         : []),
       '',
       `Tenants (${tenantList.length}): ${tenantList.join(', ')} · first ${days[0].slice(0, 10)}, last ${days.at(-1)!.slice(0, 10)}.`,
@@ -125,7 +125,7 @@ function oneDayTicket() {
     '',
     `**Fix:** ${ABOUT[cause].fix}`,
     '',
-    `**Also counted:** where the desk files them by tenant (\`causes.ts\`): ${filed}.`,
+    `**Counted once, here:** the desk files them under ${filed} by tenant (\`causes.ts\`); that ticket does not count them.`,
     '',
     `${SEEN}: "${rs.length} reports read as a one-day move; filed under parser by tenant".`,
     '',
@@ -133,7 +133,7 @@ function oneDayTicket() {
     '',
     `Reports covered (${rs.length}): ${uniq(rs).join(', ')}`,
   ].join('\n');
-  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: uniq(rs), alsoCounted: true };
+  return { cause, issue: issueNo(cause), title: titleOf(cause, rs.length), labels: ['bug', `split-from-${split.ticket}`, `cause:${cause}`], body, count: rs.length, ids: uniq(rs), alsoCounted: false };
 }
 
 if (import.meta.main) for (const t of tickets()) console.log(JSON.stringify(t));

@@ -14,7 +14,9 @@
   const groups = groupByCause(merged, tenantOf);
   const tickets = split.tickets as Record<string, { label: string; url: string }>;
   const rows = [
-    ...groups.map((g) => ({ problem: g.cause as string, count: g.reports.length, from: `the ${g.cause} row of the #${ticket} table` })),
+    // each report counted once: a cause's row less the one-day reports the note files under it (they are their own ticket)
+    ...groups.map((g) => ({ problem: g.cause as string, count: g.reports.length - (tickets['one-day-move'] ? readAs(g, notes.oneDayMove) : 0),
+      from: readAs(g, notes.oneDayMove) && tickets['one-day-move'] ? `the ${g.cause} row of the #${ticket} table, less the note under it` : `the ${g.cause} row of the #${ticket} table` })),
     ...groups.filter((g) => readAs(g, notes.oneDayMove) > 0).map((g) => ({
       problem: 'one-day-move', count: readAs(g, notes.oneDayMove), from: `the note under the #${ticket} table (filed under ${g.cause} by tenant)`,
     })),
